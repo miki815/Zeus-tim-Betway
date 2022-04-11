@@ -179,10 +179,14 @@ document.getElementById("tiket").addEventListener("click", myFunction);
 
 function myFunction() {
 
+var uplataTxt = document.getElementById('fname').value;
 var uplata = parseInt(document.getElementById('fname').value, 10);
 var kvota = parseFloat(document.getElementById("kv").innerText);
 if(uplata < 20){
    alert("Nemoguc iznos za uplatu. Molimo Vas da pokusate ponovo.");
+}
+else if(uplataTxt == null || uplataTxt == ""){
+   alert("Molimo Vas da popunite polje za uplatu.");
 }
 else if(kvota == 1){
    alert("Niste napravili tiket. Molimo Vas da pokusate ponovo.");
