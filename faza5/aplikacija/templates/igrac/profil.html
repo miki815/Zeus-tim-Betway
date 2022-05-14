@@ -18,8 +18,8 @@
 <table width="100%" cellspacing="10" cellpadding="10">
     <tr height="50px"bgcolor="#FF8040">
         <td width="33%" align="center">
-           <B> Stanje racuna: 0.00 RSD</B><hr>
-           <b>Status: VIP</b>
+           <B> Stanje racuna: {{ stanje }} RSD</B><hr>
+           <b>Status: {{ status }}</b>
 
         </td>
        <td width="33%" align="center" >
@@ -74,14 +74,27 @@
                         </div>
                     </td>
                 </tr>
-                <form action="">
+                <form action="isplati" method="post">
                     <tr>
-                        <td><b>Uneti iznos za isplatu:</b></td>
+
                         <td>
-                            <input type="text" name="iznos" id="iznos">
-                            <input type="submit" value="Isplati" background-color="#4CAF50">
+
+                                {% csrf_token %}
+                                {{ form }}
+
+
+                        </td>
+                        <td align="center" colspan="2">
+
+                                <input type="submit" value="Isplati" background-color="#4CAF50">
+
                         </td>
                     </tr>
+                </form>
+
+
+
+
                     <tr>
                         <td><b>Promena lozinke:</b></td>
                         <td><a href="promenalozinke.html" class="linkovi">Kliknuti ovde za promenu lozinke</a></td>
@@ -112,7 +125,6 @@
                         <td colspan="2"><a href="vipopklada.html" class="linkovi" align='center'>VIP opklada</a></td>
                     </tr>
 
-                </form>
             </table>
 
 
