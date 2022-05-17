@@ -1,5 +1,8 @@
 from django.db import models
 
+# Create your models here.
+from django.db import models
+
 class Admin(models.Model):
     idkor = models.OneToOneField('Korisnik', models.DO_NOTHING, db_column='IDKor', primary_key=True)  # Field name made lowercase.
 
@@ -122,7 +125,7 @@ class Tiket(models.Model):
 
 class Utakmica(models.Model):
     iduta = models.IntegerField(db_column='IDUta', primary_key=True)  # Field name made lowercase.
-    datumpocetka = models.IntegerField(db_column='DatumPocetka', blank=True, null=True)  # Field name made lowercase.
+    datumpocetka = models.CharField(db_column='DatumPocetka', max_length=20,blank=True, null=True)  # Field name made lowercase. #Ovo treba iyeniti
     tim1 = models.CharField(db_column='Tim1', max_length=20, blank=True, null=True)  # Field name made lowercase.
     tim2 = models.CharField(db_column='Tim2', max_length=20, blank=True, null=True)  # Field name made lowercase.
 

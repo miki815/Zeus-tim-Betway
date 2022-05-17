@@ -102,6 +102,8 @@ class Tiket(models.Model):
     datumuplate = models.DateField(db_column='DatumUplate', blank=True, null=True)  # Field name made lowercase.
     iznosuplate = models.DecimalField(db_column='IznosUplate', max_digits=10, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     dobitak = models.DecimalField(db_column='Dobitak', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    """idkor = models.ForeignKey(Igrac, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
+    iduta1 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta1')  # Field name made lowercase.
     iduta2 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta2', blank=True, null=True)  # Field name made lowercase.
     iduta3 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta3', blank=True, null=True)  # Field name made lowercase.
     iduta4 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta4', blank=True, null=True)  # Field name made lowercase.
@@ -111,8 +113,7 @@ class Tiket(models.Model):
     iduta8 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta8', blank=True, null=True)  # Field name made lowercase.
     iduta9 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta9', blank=True, null=True)  # Field name made lowercase.
     iduta10 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta10', blank=True, null=True)  # Field name made lowercase.
-    idkor = models.ForeignKey(Igrac, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
-    iduta1 = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta1')  # Field name made lowercase.
+   """
 
     class Meta:
         managed = False
@@ -121,7 +122,7 @@ class Tiket(models.Model):
 
 class Utakmica(models.Model):
     iduta = models.IntegerField(db_column='IDUta', primary_key=True)  # Field name made lowercase.
-    datumpocetka = models.IntegerField(db_column='DatumPocetka', blank=True, null=True)  # Field name made lowercase.
+    datumpocetka = models.DateTimeField(db_column='DatumPocetka', blank=True, null=True)  # Field name made lowercase.
     tim1 = models.CharField(db_column='Tim1', max_length=20, blank=True, null=True)  # Field name made lowercase.
     tim2 = models.CharField(db_column='Tim2', max_length=20, blank=True, null=True)  # Field name made lowercase.
 
