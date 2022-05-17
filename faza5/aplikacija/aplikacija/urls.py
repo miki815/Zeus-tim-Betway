@@ -19,4 +19,6 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('igrac/', include('igrac.urls')),
+    path('kvoter/', include('kvoter.urls')),
+    path('admin2/', include('admin2.urls')),
 ]

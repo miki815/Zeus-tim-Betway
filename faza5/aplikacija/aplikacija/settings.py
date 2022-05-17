@@ -38,7 +38,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'igrac.apps.IgracConfig',
-    'kvoter.apps.KvoterConfig'
+    'kvoter.apps.KvoterConfig',
+    'admin2.apps.Admin2Config',
+
+
 ]
 
 MIDDLEWARE = [
