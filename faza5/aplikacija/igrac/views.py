@@ -142,3 +142,24 @@ def postanivip(request, userId):
     context={'form': form, 'stanje': stanje}
     return render(request, 'igrac/postanivip.html', context)
 
+def prikaz_kvotera(request):
+    kvoteri = Korisnik.objects.all() #TODO iz tabele kvoter a ne korisnik
+
+    context = {'kvoteri': kvoteri}
+    return render(request, 'igrac/prikazKvotera.html', context)
+
+
+def prikaz_kvota(request, kvoterId):
+    kvote = Postavljenekvote.objects.filter(idkor = kvoterId)
+    utakmice = []
+    for kvota in kvote:
+         utakmice.append(kvota.iduta)
+    kvote_utakmice = zip(kvote, utakmice)
+    context={'kvote_utakmice': kvote_utakmice}
+    return render(request, 'igrac/kvote.html', context)
+
+
+def uplati_tiket(request):
+    return HttpResponse("todo")
+
+

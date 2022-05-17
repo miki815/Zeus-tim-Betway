@@ -12,4 +12,7 @@ urlpatterns = [
     path('<int:userId>/brisanjeporuka', brisanjeporuka, name='brisanjeporuka'),
     path('registracija', registracija, name='registracija'),
     path('<int:userId>/postanivip', postanivip, name='postanivip'),
+    path('prikazkvotera', prikaz_kvotera, name='kvoteri'),
+    path('kladionica/<int:kvoterId>', prikaz_kvota, name='kvote'),
+    path('kladionica/uplatitiket', uplati_tiket, name='tiket'),
 ]

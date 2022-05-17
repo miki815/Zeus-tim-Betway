@@ -42,6 +42,9 @@ class Korisnik(models.Model):
         managed = False
         db_table = 'korisnik'
 
+    def __str__(self):
+        return f"{self.idkor}: {self.korisnickoime}"
+
 
 class Kvoter(models.Model):
     idkor = models.OneToOneField(Korisnik, models.DO_NOTHING, db_column='IDKor', primary_key=True)  # Field name made lowercase.
