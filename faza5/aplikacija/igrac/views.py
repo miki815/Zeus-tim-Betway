@@ -11,7 +11,7 @@ def profil(request, userId):
     status="NV"
     stanje = 1000
     form = IsplataForm()
-    context = {'stanje': stanje, 'form': form, 'status': status}
+    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId}
     return render(request, 'igrac/profil.html', context)
 
 def deset_u_nizu(request):
@@ -161,5 +161,14 @@ def prikaz_kvota(request, kvoterId):
 
 def uplati_tiket(request):
     return HttpResponse("todo")
+
+def statistika(request, userId):
+    stat = Statistika.objects.filter(idkor = userId)
+    stat_list = list(stat)
+    podaci = stat_list[0]
+    procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
+    procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
+    context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
+    return render(request, 'igrac/statistika.html', context)
 
 

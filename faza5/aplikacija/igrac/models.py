@@ -90,14 +90,16 @@ class Postavljenekvote(models.Model):
 
 class Statistika(models.Model):
     idsta = models.IntegerField(db_column='IDSta', primary_key=True)  # Field name made lowercase.
-    brojdob = models.IntegerField(db_column='BrojDob')  # Field name made lowercase.
-    dobijeniiznos = models.DecimalField(db_column='DobijeniIznos', max_digits=15, decimal_places=2)  # Field name made lowercase.
-    ukupnauplata = models.DecimalField(db_column='UkupnaUplata', max_digits=15, decimal_places=2)  # Field name made lowercase.
+    brojpogodjenih = models.IntegerField(db_column='BrojPogodjenih', blank=True, null=True)  # Field name made lowercase.
+    brojpromasenih = models.IntegerField(db_column='BrojPromasenih', blank=True, null=True)  # Field name made lowercase.
+    ukupnouplaceno = models.DecimalField(db_column='UkupnoUplaceno', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
+    ukupnodobijeno = models.DecimalField(db_column='UkupnoDobijeno', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
     idkor = models.ForeignKey(Korisnik, models.DO_NOTHING, db_column='IDKor')  # Field name made lowercase.
 
     class Meta:
         managed = False
         db_table = 'statistika'
+
 
 
 class Tiket(models.Model):
