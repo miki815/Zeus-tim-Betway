@@ -6,4 +6,6 @@ admin.site.register(Kvoter)
 admin.site.register(Utakmiceunajavi)
 admin.site.register(Postavljenekvote)
 admin.site.register(Utakmica)
+admin.site.register(Statistika)
+
 

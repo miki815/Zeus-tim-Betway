@@ -15,4 +15,5 @@ urlpatterns = [
     path('prikazkvotera', prikaz_kvotera, name='kvoteri'),
     path('kladionica/<int:kvoterId>', prikaz_kvota, name='kvote'),
     path('kladionica/uplatitiket', uplati_tiket, name='tiket'),
+    path('statistika/<int:userId>', statistika, name='statistika')
 ]
