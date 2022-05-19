@@ -6,6 +6,6 @@ urlpatterns = [
     path('', index, name='index'),
     path('<int:userId>/napravikvote', napravikvote, name='napravikvote'),
     path('<int:userId>/prikaziaktivneutakmice', prikaziaktivneutakmice, name='prikaziaktivneutakmice'),
-
+    path('statistika/<int:userId>', statistika, name='statistika'),
 
 ]
