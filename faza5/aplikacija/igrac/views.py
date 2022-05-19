@@ -1,4 +1,4 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from .forms import *
 from .models import *
@@ -14,15 +14,25 @@ def profil(request, userId):
     context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId}
     return render(request, 'igrac/profil.html', context)
 
-def deset_u_nizu(request):
+def deset_u_nizu(request, userId):
     if(request.method == 'POST'):
         form = DesetForm(request.POST)
         if(form.is_valid()):
+            ishod = form.cleaned_data['ishod']
+            igra = Desetunizu.objects.filter(idkor = userId)
+            if not igra:
+                # todo ubaci u bazu
+                pass
+            igra_list = list(igra)
+            moja_igra = igra_list[0]
+            moja_igra.validno = True
+            moja_igra.odigrano = ishod
+            moja_igra.save()
             return HttpResponse(form.cleaned_data['ishod'])
             #TODO ubaciti izbor u bazu, redirect na statistiku igre
     else:
         form = DesetForm()
-    context = {'form': form}
+    context = {'form': form, 'userId': userId}
     return render(request, 'igrac/desetunizu.html', context)
 
 
@@ -164,11 +174,21 @@ def uplati_tiket(request):
 
 def statistika(request, userId):
     stat = Statistika.objects.filter(idkor = userId)
+    if not stat:
+        raise Http404("Ne postoji igrac sa unetim ID")
     stat_list = list(stat)
     podaci = stat_list[0]
     procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
     procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
     context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'igrac/statistika.html', context)
+
+def najbolji(request):
+    korisnici=Korisnik.objects.all()
+    s=Statistika.objects.all()
+    najbolji=Statistika.objects.order_by('-ukupnodobijeno')
+    brojprimljenih = Statistika.objects.order_by('-brojprimljenihpogodjenih')
+    context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih}
+    return   render(request, 'igrac/najbolji.html', context)
 
 

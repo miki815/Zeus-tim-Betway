@@ -45,3 +45,15 @@ def dodajutakmicu(request):
     form=DodavanjeUtakmiceForm()
     context={'form': form}
     return render(request, 'admin2/postaviutakmicu.html', context)
+
+def deset_u_nizu_rez(request, rezultat):
+    tipovi = Desetunizu.objects.all()
+    for tip in tipovi:
+        if tip.validno:
+            tip.validno = False
+            if tip.odigrano == rezultat:
+                tip.brojpogodaka += 1
+            else:
+                tip.brojpogodaka = 0
+            tip.save()
+    return HttpResponse(tip) #todo neka povratna vrednost

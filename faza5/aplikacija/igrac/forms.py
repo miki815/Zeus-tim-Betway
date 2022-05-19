@@ -1,6 +1,6 @@
 from django import forms
 
-ISHODI = [('kec', '1'), ('iks', 'x'), ('dvojka', '2')]
+ISHODI = [('1', '1'), ('x', 'x'), ('2', '2')]
 VIP=[('1','Mesec dana: 1000RSD'),('2','Sest meseci: 5000RSD'),('3','Godinu dana: 9000RSD')]
 
 class DesetForm(forms.Form):
