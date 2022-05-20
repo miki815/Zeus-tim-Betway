@@ -2,6 +2,7 @@ from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from .forms import *
 from .models import *
+from datetime import date
 
 
 def index(request):
@@ -152,20 +153,48 @@ def postanivip(request, userId):
     context={'form': form, 'stanje': stanje}
     return render(request, 'igrac/postanivip.html', context)
 
-def prikaz_kvotera(request):
+def prikaz_kvotera(request, userId):
     kvoteri = Korisnik.objects.all() #TODO iz tabele kvoter a ne korisnik
 
-    context = {'kvoteri': kvoteri}
+    context = {'kvoteri': kvoteri, 'userId': userId}
     return render(request, 'igrac/prikazKvotera.html', context)
 
 
-def prikaz_kvota(request, kvoterId):
+def prikaz_kvota(request, kvoterId, igracId):
     kvote = Postavljenekvote.objects.filter(idkor = kvoterId)
     utakmice = []
     for kvota in kvote:
          utakmice.append(kvota.iduta)
+
+    if request.method == 'POST':
+        ukupna_kvota = 1;
+        uplata = request.POST.get("fname")
+        tiket = Tiket()
+        tiket.save()
+        for kvota in kvote:
+            data_id = "test" + kvota.idkvo
+            data = request.POST.get(data_id)
+            if data:
+                ukupna_kvota *= float(data);
+                par_na_tiketu = Tiketdogadjaj()
+                par_na_tiketu.odigrano = False
+                par_na_tiketu.iduta = kvota.iduta
+                par_na_tiketu.kvota = data
+                par_na_tiketu.idtik = tiket
+                par_na_tiketu.save()
+        tiket.kvota = ukupna_kvota
+        tiket.iznosuplate = uplata
+        tiket.dobitak = ukupna_kvota * int(uplata)
+        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
+        tiket.idkvo = kvoter[0]
+        igrac = list(Igrac.objects.filter(idkor=igracId))
+        tiket.idkor = igrac[0]
+        tiket.datumuplate = date.today()
+        tiket.save()
+        return HttpResponse("Vas tiket je uplacen")
+
     kvote_utakmice = zip(kvote, utakmice)
-    context={'kvote_utakmice': kvote_utakmice}
+    context={'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId}
     return render(request, 'igrac/kvote.html', context)
 
 
