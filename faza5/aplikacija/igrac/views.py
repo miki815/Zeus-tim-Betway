@@ -33,7 +33,11 @@ def deset_u_nizu(request, userId):
             #TODO ubaciti izbor u bazu, redirect na statistiku igre
     else:
         form = DesetForm()
-    context = {'form': form, 'userId': userId}
+    indeks = Utakmica10.objects.count()
+    utakmica = Utakmica10.objects.all()
+    utakmica = utakmica[indeks - 1]
+    utakmica = utakmica.utakmica10
+    context = {'form': form, 'userId': userId,  'utakmica': utakmica}
     return render(request, 'igrac/desetunizu.html', context)
 
 

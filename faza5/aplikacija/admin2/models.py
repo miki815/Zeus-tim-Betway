@@ -162,3 +162,9 @@ class Tiketdogadjaj(models.Model):
         managed = False
         db_table = 'tiketdogadjaj'
 
+class Utakmica10(models.Model):
+    utakmica10 = models.CharField(db_column='Utakmica10', primary_key=True, max_length=100)  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'utakmica10'
