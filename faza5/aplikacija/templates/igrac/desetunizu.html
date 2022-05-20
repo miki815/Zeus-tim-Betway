@@ -84,7 +84,7 @@
 <h3>Vas trenutni skor: 6</h3>
 <div class="centralni">
 <form action="{{ userId }}" method="post">
-<p>Juventus - Inter</p>
+<p>{{ utakmica}}</p>
     {% csrf_token %}
     {{ form }}
     <input  type="submit"  value="Odigraj">
