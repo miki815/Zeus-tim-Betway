@@ -1,7 +1,8 @@
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.shortcuts import render
 from .forms import *
 from .models import *
+from datetime import date
 
 
 def index(request):
@@ -11,18 +12,32 @@ def profil(request, userId):
     status="NV"
     stanje = 1000
     form = IsplataForm()
-    context = {'stanje': stanje, 'form': form, 'status': status}
+    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId}
     return render(request, 'igrac/profil.html', context)
 
-def deset_u_nizu(request):
+def deset_u_nizu(request, userId):
     if(request.method == 'POST'):
         form = DesetForm(request.POST)
         if(form.is_valid()):
+            ishod = form.cleaned_data['ishod']
+            igra = Desetunizu.objects.filter(idkor = userId)
+            if not igra:
+                # todo ubaci u bazu
+                pass
+            igra_list = list(igra)
+            moja_igra = igra_list[0]
+            moja_igra.validno = True
+            moja_igra.odigrano = ishod
+            moja_igra.save()
             return HttpResponse(form.cleaned_data['ishod'])
             #TODO ubaciti izbor u bazu, redirect na statistiku igre
     else:
         form = DesetForm()
-    context = {'form': form}
+    indeks = Utakmica10.objects.count()
+    utakmica = Utakmica10.objects.all()
+    utakmica = utakmica[indeks - 1]
+    utakmica = utakmica.utakmica10
+    context = {'form': form, 'userId': userId,  'utakmica': utakmica}
     return render(request, 'igrac/desetunizu.html', context)
 
 
@@ -141,4 +156,72 @@ def postanivip(request, userId):
     form=VipForm()
     context={'form': form, 'stanje': stanje}
     return render(request, 'igrac/postanivip.html', context)
+
+def prikaz_kvotera(request, userId):
+    kvoteri = Korisnik.objects.all() #TODO iz tabele kvoter a ne korisnik
+
+    context = {'kvoteri': kvoteri, 'userId': userId}
+    return render(request, 'igrac/prikazKvotera.html', context)
+
+
+def prikaz_kvota(request, kvoterId, igracId):
+    kvote = Postavljenekvote.objects.filter(idkor = kvoterId)
+    utakmice = []
+    for kvota in kvote:
+         utakmice.append(kvota.iduta)
+
+    if request.method == 'POST':
+        ukupna_kvota = 1;
+        uplata = request.POST.get("fname")
+        tiket = Tiket()
+        tiket.save()
+        for kvota in kvote:
+            data_id = "test" + kvota.idkvo
+            data = request.POST.get(data_id)
+            if data:
+                ukupna_kvota *= float(data);
+                par_na_tiketu = Tiketdogadjaj()
+                par_na_tiketu.odigrano = False
+                par_na_tiketu.iduta = kvota.iduta
+                par_na_tiketu.kvota = data
+                par_na_tiketu.idtik = tiket
+                par_na_tiketu.save()
+        tiket.kvota = ukupna_kvota
+        tiket.iznosuplate = uplata
+        tiket.dobitak = ukupna_kvota * int(uplata)
+        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
+        tiket.idkvo = kvoter[0]
+        igrac = list(Igrac.objects.filter(idkor=igracId))
+        tiket.idkor = igrac[0]
+        tiket.datumuplate = date.today()
+        tiket.save()
+        return HttpResponse("Vas tiket je uplacen")
+
+    kvote_utakmice = zip(kvote, utakmice)
+    context={'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId}
+    return render(request, 'igrac/kvote.html', context)
+
+
+def uplati_tiket(request):
+    return HttpResponse("todo")
+
+def statistika(request, userId):
+    stat = Statistika.objects.filter(idkor = userId)
+    if not stat:
+        raise Http404("Ne postoji igrac sa unetim ID")
+    stat_list = list(stat)
+    podaci = stat_list[0]
+    procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
+    procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
+    context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
+    return render(request, 'igrac/statistika.html', context)
+
+def najbolji(request):
+    korisnici=Korisnik.objects.all()
+    s=Statistika.objects.all()
+    najbolji=Statistika.objects.order_by('-ukupnodobijeno')
+    brojprimljenih = Statistika.objects.order_by('-brojprimljenihpogodjenih')
+    context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih}
+    return   render(request, 'igrac/najbolji.html', context)
+
 

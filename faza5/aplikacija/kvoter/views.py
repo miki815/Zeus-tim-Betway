@@ -81,3 +81,14 @@ def prikaziaktivneutakmice(request, userId):
         'utakmice': utakmicesve
     }
     return render(request, 'kvoter/aktivneutakmice.html', context)
+
+def statistika(request, userId):
+    stat = Statistika.objects.filter(idkor = userId)
+    if not stat:
+        raise Http404("Ne postoji kvoter sa unetim ID")
+    stat_list = list(stat)
+    podaci = stat_list[0]
+    procenat_win = round((podaci.brojprimljenihpogodjenih / (podaci.brojprimljenihpogodjenih + podaci.brojprimljenihpromasenih)) * 100, 2)
+    procenat_lose = round((podaci.brojprimljenihpromasenih / (podaci.brojprimljenihpogodjenih + podaci.brojprimljenihpromasenih)) * 100, 2)
+    context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
+    return render(request, 'kvoter/statistika.html', context)
