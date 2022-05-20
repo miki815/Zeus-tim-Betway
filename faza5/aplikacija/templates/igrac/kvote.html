@@ -81,6 +81,7 @@
     </tr>
 </table>
 
+
 <div class="row">
   <div class="column">
     <table>
@@ -100,8 +101,13 @@
         <th>2-1</th>
         <th>2-x</th>
         <th>x-2</th>
+        <th style="display: none">idkvo</th>
       </tr>
+
+
+
         {% for kvota, utakmica in kvote_utakmice %}
+
             <tr>
             <!--
                 <td>{ utakmica.iduta.datumpocetka }}</td>
@@ -123,6 +129,7 @@
                 <td class = "kvote">{{ kvota.kvota21 }}</td>
                 <td class = "kvote">{{ kvota.kvota2x }}</td>
                 <td class = "kvote">{{ kvota.kvota22 }}</td>
+                <td class = "idkvote" style="display: none">{{ kvota.idkvo }}</td>
             </tr>
         {% endfor %}
     </table>
@@ -131,20 +138,18 @@
 
 <h2>Ukupna kvota</h2>
 <h3 id="kv">1</h3>
-        {% for utakmica in utakmice %}
-            {{ utakmica.iduta }}
-        {% endfor %}
 
 
 
-<form action="uplatitiket" method="post">
+<form action="../{{ kvoterId }}/{{ igracId }}" method="post">
   {% csrf_token %}
+    {% for kvota in kvote %}
+        <input type="hidden" value=0 name="test{{kvota.idkvo}}" id="test{{kvota.idkvo}}">
+    {% endfor %}
+
   <label for="fname" style="color: #59FF37">Uplata (min 20):</label><br>
   <input type="text" id="fname" name="fname" value="100"><br>
   <input  type="submit"  value="Uplati tiket">
-
-
-
 </form>
 
 <div class="bottom">
@@ -170,22 +175,43 @@ function inputClickHandler(e){
     var tdElm = e.target||e.srcElement;
     var kvota = parseFloat(tdElm.innerText);
     var ukupna = parseFloat(document.getElementById("kv").innerText);
+    var rowId = tdElm.parentNode.rowIndex;
+    var all = document.getElementsByClassName("kvote");
+    var id_kvota_svih = document.getElementsByClassName("idkvote");
+    var idkvote = 0;
+    var input_id;
 
-    if(tdElm.style.backgroundColor == 'yellow'){
+    if(tdElm.style.backgroundColor == 'yellow'){ // uklanjanje kvote
         tdElm.style.backgroundColor = '#fff';
         ukupna = ukupna / kvota;
         document.getElementById("kv").innerText = ukupna;
-    } else {
-        // obrisi prethodno odigrano polje
-        var rowId = tdElm.parentNode.rowIndex;
-        var all = document.getElementsByClassName("kvote");
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                input_id = "test" + idkvote;
+                document.getElementById(input_id).value = 0;
+                break;
+            }
+        }
+    } else { // dodavanje kvote
+        // obrisi prethodno odigranu kvotu za taj mec
         for (var i=0;i<all.length;i++) {
             if(all[i].parentNode.rowIndex == rowId && all[i].style.backgroundColor == 'yellow'){
                  all[i].style.backgroundColor = '#fff';
                  var kvotaObrisi = parseFloat(all[i].innerText);
                  ukupna = ukupna / kvotaObrisi;
+                 break;
             }
         }
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                input_id = "test" + idkvote;
+                document.getElementById(input_id).value = kvota;
+                break;
+            }
+        }
+
         // ubaci nov izbor
         tdElm.style.backgroundColor = 'yellow';
         ukupna = ukupna * kvota;
