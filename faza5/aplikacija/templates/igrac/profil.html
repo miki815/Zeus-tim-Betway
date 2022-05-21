@@ -24,7 +24,7 @@
         </td>
        <td width="33%" align="center" >
 
-           <font size="8"><b>Moj nalog</b></font>
+           <font size="8"><b>{{ korisnickoIme }}</b></font>
        </td>
        <td width="33%" align="right">
 
@@ -68,13 +68,13 @@
                         <div><b>Uspesnost</b></div>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-striped progress-bar-animated"
-                            style="width: 20%;">2</div>
+                            style="width: 20%;">{{ brojPogodaka }}</div>
                             <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
-                            style="width: 80%;">8</div>
+                            style="width: 80%;">{{ brojPromasaja }}</div>
                         </div>
                     </td>
                 </tr>
-                <form action="isplati" method="post">
+                <form action="{{ userId }}" method="post">
                     <tr>
 
                         <td>
@@ -97,11 +97,11 @@
 
                     <tr>
                         <td><b>Promena lozinke:</b></td>
-                        <td><a href="promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a></td>
+                        <td><a href="{{ userId }}/promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a></td>
                     </tr>
                     <tr>
                         <td><b>Brisanje naloga:</b></td>
-                        <td><a href="brisanjenaloga" class="linkovi">Kliknuti ovde za brisanje naloga</a></td>
+                        <td><a href="{{ userId }}/brisanjenaloga" class="linkovi">Kliknuti ovde za brisanje naloga</a></td>
                     </tr>
                     <tr>
                         <td ><a href="statistika/{{ userId }}" class="linkovi" align='center'> Pregled statistike</a></td>
@@ -110,20 +110,24 @@
                         <td colspan="2"><a href="istorijaodigranihutakmica.html" class="linkovi" align='center'> Istorija odigranih utakmica</a></td>
                     </tr>
 	 <tr>
-                        <td colspan="2"><a href="najbolji.html" class="linkovi" align='center'>Najbolji</a></td>
+                        <td colspan="2"><a href="najbolji" class="linkovi" align='center'>Najbolji</a></td>
                     </tr>
-	  <tr>
-                        <td colspan="2"><a href="postanivip.html" class="linkovi" align='center'>Postani VIP</a></td>
+                {% if status == "REGULAR" %}
+                    <tr>
+                        <td colspan="2"><a href="{{ userId }}/postanivip" class="linkovi" align='center'>Postani VIP</a></td>
                     </tr>
+                {% endif %}
                       <tr>
                         <td colspan="2"><a href="prikazkvotera/{{ userId }}" class="linkovi" align='center'>Kladjenje</a></td>
                     </tr>
   	 <tr>
                         <td colspan="2"><a href="desetunizu/{{ userId }}" class="linkovi" align='center'>10 u nizu</a></td>
-                    </tr>
- 	<tr>
+     </tr>
+                {% if status == "VIP" %}
+ 	                <tr>
                         <td colspan="2"><a href="prikazvipkvotera/{{ userId }}" class="linkovi" align='center'>VIP opklada</a></td>
                     </tr>
+                {% endif %}
 
             </table>
 

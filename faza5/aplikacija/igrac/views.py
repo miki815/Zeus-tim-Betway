@@ -9,10 +9,31 @@ def index(request):
     return HttpResponse("Igrac ovde")
 
 def profil(request, userId):
-    status="NV"
-    stanje = 1000
+    igrac = Korisnik.objects.filter(idkor = userId)
+    igrac = list(igrac)
+    igrac = igrac[0]
+    status= "VIP" if igrac.stanje else "REGULAR"
+    stanje = igrac.stanje if igrac.stanje else 0
+    statistika = Statistika.objects.filter(idkor = userId)
+    statistika = list(statistika)
+    statistika = statistika[0]
+    brojPogodaka = statistika.brojpogodjenih
+    brojPromasaja = statistika.brojpromasenih
+    korisnickoIme = igrac.korisnickoime
+    iznos=0
+
+    if (request.method == 'POST'):
+        form = IsplataForm(request.POST)
+        if (form.is_valid()):
+            iznos = form.cleaned_data['iznos']
+            if(stanje>=iznos):
+                stanje=stanje-iznos
+                igrac.stanje = stanje
+                igrac.save()
+
     form = IsplataForm()
-    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId}
+    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId, 'brojPogodaka': brojPogodaka,
+               'brojPromasaja': brojPromasaja, 'korisnickoIme': korisnickoIme}
     return render(request, 'igrac/profil.html', context)
 
 def deset_u_nizu(request, userId):
@@ -40,25 +61,6 @@ def deset_u_nizu(request, userId):
     context = {'form': form, 'userId': userId,  'utakmica': utakmica}
     return render(request, 'igrac/desetunizu.html', context)
 
-
-
-
-def isplati(request):
-    stanje=1000
-    iznos=0
-    if (request.method == 'POST'):
-        form = IsplataForm(request.POST)
-        if (form.is_valid()):
-            iznos = form.cleaned_data['iznos']
-            if(stanje>=iznos):
-                stanje=stanje-iznos
-            context = {'form': form, 'stanje': stanje}
-            return render(request, 'igrac/profil.html', context)
-            # TODO ubaciti izbor u bazu, redirect na statistiku igre
-    else:
-        form = IsplataForm()
-    context = {'form': form, 'stanje': stanje}
-    return render(request, 'igrac/profil.html', context)
 
 def promenalozinke(request, userId):
     poruka=""
