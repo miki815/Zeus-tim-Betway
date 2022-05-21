@@ -11,6 +11,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 
     <style>
     * {
@@ -101,6 +102,9 @@
         <th>2-1</th>
         <th>2-x</th>
         <th>x-2</th>
+        <th>1g</th>
+        <th>2g</th>
+        <th>xg</th>
         <th style="display: none">idkvo</th>
       </tr>
 
@@ -129,6 +133,9 @@
                 <td class = "kvote">{{ kvota.kvota21 }}</td>
                 <td class = "kvote">{{ kvota.kvota2x }}</td>
                 <td class = "kvote">{{ kvota.kvota22 }}</td>
+                <td class = "kvote">{{ kvota.prvigol1 }}</td>
+                <td class = "kvote">{{ kvota.prvigol2 }}</td>
+                <td class = "kvote">{{ kvota.prvigol3 }}</td>
                 <td class = "idkvote" style="display: none">{{ kvota.idkvo }}</td>
             </tr>
         {% endfor %}
@@ -145,6 +152,7 @@
   {% csrf_token %}
     {% for kvota in kvote %}
         <input type="hidden" value=0 name="test{{kvota.idkvo}}" id="test{{kvota.idkvo}}">
+        <input type="hidden" value=0 name="odigrano{{kvota.idkvo}}" id="odigrano{{kvota.idkvo}}">
     {% endfor %}
 
   <label for="fname" style="color: #59FF37">Uplata (min 20):</label><br>
@@ -180,6 +188,9 @@ function inputClickHandler(e){
     var id_kvota_svih = document.getElementsByClassName("idkvote");
     var idkvote = 0;
     var input_id;
+    var odigrano_id;
+    var odigrano = $(tdElm).closest('table').find('th').eq($(tdElm).index()).html();
+
 
     if(tdElm.style.backgroundColor == 'yellow'){ // uklanjanje kvote
         tdElm.style.backgroundColor = '#fff';
@@ -189,7 +200,9 @@ function inputClickHandler(e){
             if(id_kvota_svih[i].parentNode.rowIndex == rowId){
                 idkvote = id_kvota_svih[i].innerText;
                 input_id = "test" + idkvote;
+                odigrano_id = "odigrano" + idkvote;
                 document.getElementById(input_id).value = 0;
+                document.getElementById(odigrano_id).value = 0;
                 break;
             }
         }
@@ -207,7 +220,9 @@ function inputClickHandler(e){
             if(id_kvota_svih[i].parentNode.rowIndex == rowId){
                 idkvote = id_kvota_svih[i].innerText;
                 input_id = "test" + idkvote;
+                odigrano_id = "odigrano" + idkvote;
                 document.getElementById(input_id).value = kvota;
+                document.getElementById(odigrano_id).value = odigrano;
                 break;
             }
         }

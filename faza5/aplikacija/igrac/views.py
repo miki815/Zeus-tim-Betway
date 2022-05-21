@@ -177,11 +177,13 @@ def prikaz_kvota(request, kvoterId, igracId):
         tiket.save()
         for kvota in kvote:
             data_id = "test" + kvota.idkvo
+            odigrano_id = "odigrano" + kvota.idkvo
             data = request.POST.get(data_id)
+            odigrano = request.POST.get(odigrano_id)
             if data:
                 ukupna_kvota *= float(data);
                 par_na_tiketu = Tiketdogadjaj()
-                par_na_tiketu.odigrano = False
+                par_na_tiketu.odigrano = odigrano
                 par_na_tiketu.iduta = kvota.iduta
                 par_na_tiketu.kvota = data
                 par_na_tiketu.idtik = tiket
@@ -225,3 +227,66 @@ def najbolji(request):
     return   render(request, 'igrac/najbolji.html', context)
 
 
+def prikaz_vip_kvotera(request, userId):
+    kvoteri = Korisnik.objects.all()
+    vip_kvoteri = []
+    for kvoter in kvoteri:
+        if kvoter.vip:
+            vip_kvoteri.append(kvoter)
+    context = {'kvoteri': vip_kvoteri, 'userId': userId}
+    return render(request, 'igrac/prikazVipKvotera.html', context)
+
+
+def prikaz_vip_kvota(request, kvoterId, igracId):
+    kvote = Vipkvote.objects.filter(idkor = kvoterId)
+    tiketi = []
+    igraci_tiketa = []
+    tiketi_podaci = []
+    for kvota in kvote:
+         tiketi.append(kvota.idtik)
+    for tiket in tiketi:
+        tiket_dogadjaji = Tiketdogadjaj.objects.filter(idtik = tiket.idtik)
+        tiket_dogadjaji = list(tiket_dogadjaji)
+        utakmice = []
+        for dogadjaj in tiket_dogadjaji:
+            utakmica = dogadjaj.iduta
+            utakmica_podaci = []
+            utakmica_podaci.append(utakmica) # tim1
+            utakmica_podaci.append(utakmica) # tim2
+            utakmica_podaci.append(dogadjaj.odigrano)
+            utakmice.append(utakmica_podaci)
+        tiketi_podaci.append(utakmice)
+        igraci_tiketa.append(tiket.idkor)
+    return HttpResponse(tiketi_podaci)
+    if request.method == 'POST':
+        ukupna_kvota = 1;
+        uplata = request.POST.get("fname")
+        vip_tiket = Viptiket()
+        vip_tiket.save()
+        for kvota in kvote:
+            data_id = "test" + kvota.idkvo
+            data = request.POST.get(data_id)
+            if data:
+                ukupna_kvota *= float(data);
+                par_na_tiketu = Tiketdogadjaj()
+                par_na_tiketu.odigrano = False
+                par_na_tiketu.iduta = kvota.iduta
+                par_na_tiketu.kvota = data
+                par_na_tiketu.idtik = tiket
+                par_na_tiketu.save()
+        vip_tiket.kvota = ukupna_kvota
+        vip_tiket.iznosuplate = uplata
+        vip_tiket.dobitak = ukupna_kvota * int(uplata)
+        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
+        vip_tiket.idkvo = kvoter[0]
+        igrac = list(Igrac.objects.filter(idkor=igracId))
+        vip_tiket.idkor = igrac[0]
+        vip_tiket.datumuplate = date.today()
+        vip_tiket.save()
+        return HttpResponse("Vas tiket je uplacen")
+
+    kvote_tiketi = zip(kvote, tiketi)
+    kvote_igraci = zip(kvote, igraci_tiketa)
+    context={'kvote_tiketi': kvote_tiketi, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId, 'kvote': kvote,
+            'kvote_igraci': kvote_igraci }
+    return render(request, 'igrac/vipopklada.html', context)
