@@ -74,3 +74,131 @@ def dodajutakmicu10(request):
     form=DodavanjeUtakmice10Form()
     context={'form': form}
     return render(request, 'admin2/postaviutakmicu10.html', context)
+
+def prikaziaktivneutakmice(request):
+    utakmicesve = ""
+    utakmice = Utakmica.objects.all()
+
+    utakmiceun=Utakmiceutoku.objects.all()
+
+    for u in utakmice:
+         for i in utakmiceun:
+             if (i.pk ==u.pk):
+                utakmicesve = utakmicesve + "Timovi:\t" + u.tim1 + " - " + u.tim2 + "\t\t\tDatum i vreme:\t" + u.datumpocetka + "" + "\n"
+
+    context = {
+        'utakmice': utakmicesve
+    }
+    return render(request, 'admin2/aktivneutakmice.html', context)
+
+def ugasiutakmicu(request):
+    poruka = ""
+    if(request.method=='POST'):
+        poruka=""
+        form=UgasiUtakmicuForm(request.POST)
+        if form.is_valid():
+            tim1 = form.cleaned_data['tim1']
+            tim2 = form.cleaned_data['tim2']
+            ishod = form.cleaned_data['ishod']
+            datum=form.cleaned_data['datum']
+            ishod=ishod.split(' ')
+            utakmica= Utakmica.objects.get(tim1=tim1, tim2=tim2, datumpocetka=datum)
+            if(utakmica):
+                zabrisanje=Utakmiceutoku.objects.get(pk=utakmica.pk)
+                zavrsena = Zavrseneutakmice()
+                zavrsena.iduta=utakmica
+                zavrsena.ishod=ishod[0]
+                zavrsena.poluvremekraj=ishod[1]
+                zavrsena.prvigol=ishod[2]
+                zavrsena.save()
+                zabrisanje.delete()
+                poruka="Uspesno ste obrisali utakmicu!"
+            else:
+                prouka="Utakmica ne postoji!"
+
+            #isplacivanje!!!!
+            tiketdogadjaj=Tiketdogadjaj.objects.filter(iduta=utakmica.iduta)
+            for tiketd in tiketdogadjaj:
+                if(tiketd.odigrano==ishod[0] or tiketd.odigrano==ishod[1]  or tiketd.odigrano==ishod[2]  ):
+                    tiketd.ishod=1
+                else:
+                    tiketd.ishod=0
+                tiketd.save()
+            tiketi=Tiket.objects.all()
+            for tiket in tiketi:
+                tiketdog=Tiketdogadjaj.objects.filter(idtik=tiket)
+                dobijeno=1
+                for t in tiketdog:
+                    if(t.ishod==0):
+                        dobijeno=0
+                    if(t.ishod==-1):
+                        dobijeno=-1
+                if(dobijeno==1):
+                    for t in tiketdog:
+                        t.delete()
+
+                    s=tiket.idkor.pk
+                    korisnik=Korisnik.objects.get(pk=s)
+                    korisnik.stanje=korisnik.stanje+tiket.iznosuplate*tiket.kvota
+                    korisnik.save()
+                    tiket.delete()
+
+                    # povecati broj dobijenih kvoteru ili broj izgubljenih
+                    s=tiket.idkvo.idkor.pk
+                    kvoter = Korisnik.objects.get(pk=s)
+                    kvoter.stanje = kvoter.stanje - tiket.iznosuplate * tiket.kvota
+                    statistika = Statistika.objects.get(idkor=s)
+                    statistika.brojprimljenihpromasenih = statistika.brojprimljenihpromasenih + 1
+                    kvoter.save()
+                    statistika.save()
+                    statistika=Statistika.objects.get(idkor=tiket.idkor.pk)
+                    statistika.brojpogodjenih=statistika.brojpogodjenih+1
+                    statistika.save()
+                if(dobijeno==0):
+                    for t in tiketdog:
+                        t.delete()
+                    tiket.delete()
+                    statistika = Statistika.objects.get(idkor=tiket.idkor.idkor)
+                    statistika.brojpromasenih = statistika.brojpromasenih + 1
+                    statistika.save()
+                    statistika = Statistika.objects.get(idkor=tiket.idkvo.idkor)
+                    statistika.brojprimljenihpromasenih = statistika.brojprimljenihpromasenih + 1
+                    statistika.save()
+            """postavljeneKvote=Postavljenekvote.objects.get(iduta=utakmica)
+            for p in postavljeneKvote:
+                p.delete()""" #TODO Obrisati komentar kada se bude ispravilo u bazi da u postavljene kvote su Utakmica
+                             #TODO a ne UtakmicaUNajavi
+
+
+
+
+    form=UgasiUtakmicuForm()
+    context={ 'form' : form, 'poruka': poruka}
+    return render(request, 'admin2/ugasiutakmicu.html', context)
+
+def startujutakmicu(request):
+    poruka=''
+    form = StartujUtakmicuForm()
+    if(request.method=='POST'):
+        form=StartujUtakmicuForm(request.POST)
+        if form.is_valid():
+            tim1 = form.cleaned_data['tim1']
+            tim2 = form.cleaned_data['tim2']
+            datumvreme = form.cleaned_data['datum']
+            utakmica=Utakmica.objects.get(tim1=tim1, tim2=tim2, datumpocetka=datumvreme)
+            utakmicaun=Utakmiceunajavi.objects.get(pk=utakmica)
+            if(utakmicaun):
+                utakmicaun.delete()
+                u=Utakmiceutoku()
+                u.pk=utakmica.iduta
+                u.save()
+                poruka="Uspesno ste startovali utakmicu"
+            else:
+                poruke="Utakmica ne postoji!"
+
+
+    context={
+        'form': form,
+        'poruka': poruka
+    }
+    return render(request, 'admin2/startujutakmicu.html', context)

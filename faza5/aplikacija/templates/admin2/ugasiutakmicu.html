@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+    <form action="ugasiutakmicu" method="post" align="center" style="margin-top: 150px">
+        {% csrf_token %}
+        {{ form }}
+
+        <input type="submit" value="Potvrdi"> </input>
+    </form>
+    <form align="center" style="margin-top: 30px">
+        {% csrf_token %}
+
+        <h3><i><b>{{ poruka }}</b></i></h3>
+
+    </form>
+</body>
+</html>

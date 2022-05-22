@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<div style="text-align: center; margin-top: 150px;">
+    <form action="startujutakmicu" method="post">
+        {% csrf_token %}
+        {{ form }}
+
+        <input type="submit" value="Pokreni utakmicu"> </input>
+    </form>
+     <form style="margin-top: 30px;">
+        {% csrf_token %}
+       <i><b> {{ poruka }}</b></i>
+    </form>
+</div>
+</body>
+</html>

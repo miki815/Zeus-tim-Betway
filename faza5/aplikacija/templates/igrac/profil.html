@@ -57,12 +57,17 @@
 
 
 
-    <tr height="550px" bgcolor="#154360" >
+    <tr height="600px" bgcolor="#154360" >
         </td>
         <td colspan="3">
 
-            <table align="center" cellpadding="15px" class="text">
-
+            <table align="center" cellpadding="15px" class="text"  style="border-collapse: collapse;">
+                <tr>
+                    <td colspan="2" align="center" class="linkovi">
+                        {% csrf_token %}
+                        <b><h3>{{ poruka }}</h3></b>
+                    </td>
+                </tr>
                 <tr width="100%" class="text">
                     <td colspan="2" align="center">
                         <div><b>Uspesnost</b></div>
@@ -92,37 +97,70 @@
                     </tr>
                 </form>
 
-
-
-
                     <tr>
                         <td><b>Promena lozinke:</b></td>
-                        <td><a href="promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a></td>
+                        <td >
+                            <div class="linkovi">
+                                <a href="promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
                         <td><b>Brisanje naloga:</b></td>
-                        <td><a href="brisanjenaloga" class="linkovi">Kliknuti ovde za brisanje naloga</a></td>
+                        <td >
+                            <div class="linkovi">
+                                <a href="brisanjenaloga" >Kliknuti ovde za brisanje naloga</a>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
-                        <td ><a href="statistika/{{ userId }}" class="linkovi" align='center'> Pregled statistike</a></td>
+                        <td  colspan="2" >
+                            <div class="linkovi">
+                                <a href="statistika/{{ userId }}" class="linkovi" align='center'> Pregled statistike</a>
+                            </div>
+                        </td>
                     </tr>
                     <tr>
-                        <td colspan="2"><a href="istorijaodigranihutakmica.html" class="linkovi" align='center'> Istorija odigranih utakmica</a></td>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="istorijaodigranihutakmica.html" class="linkovi" align='center'> Istorija odigranih utakmica</a>
+                            </div>
+                        </td>
                     </tr>
 	 <tr>
-                        <td colspan="2"><a href="najbolji.html" class="linkovi" align='center'>Najbolji</a></td>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="najbolji.html" class="linkovi" align='center'>Najbolji</a>
+                            </div>
+                        </td>
                     </tr>
 	  <tr>
-                        <td colspan="2"><a href="postanivip.html" class="linkovi" align='center'>Postani VIP</a></td>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="postanivip.html" class="linkovi" align='center'>Postani VIP</a>
+                            </div>
+                        </td>
                     </tr>
                       <tr>
-                        <td colspan="2"><a href="prikazkvotera/{{ userId }}" class="linkovi" align='center'>Kladjenje</a></td>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="prikazkvotera/{{ userId }}" class="linkovi" align='center'>Kladjenje</a>
+                            </div>
+                        </td>
                     </tr>
-  	 <tr>
-                        <td colspan="2"><a href="desetunizu/{{ userId }}" class="linkovi" align='center'>10 u nizu</a></td>
+                     <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="desetunizu/{{ userId }}" class="linkovi" align='center'>10 u nizu</a>
+                            </div>
+                        </td>
                     </tr>
- 	<tr>
-                        <td colspan="2"><a href="vipopklada.html" class="linkovi" align='center'>VIP opklada</a></td>
+ 	                <tr>
+                        <td colspan="2">
+                            <div class="linkovi" >
+                                <a href="vipopklada.html" class="linkovi" align='center'>VIP opklada</a>
+                            </div>
+                        </td>
                     </tr>
 
             </table>
@@ -140,3 +178,24 @@
 </table>
 </body>
 </html>
+
+
+<style>
+    .linkovi{
+        background-color: #FF8040;
+        border-radius: 10px;
+        text-align: center;
+        height: 80%;
+
+    }
+    a{
+        font-weight: bold;
+        color: black;
+    }
+    tr{
+         padding: 10px;
+    }
+    td{
+          font-weight: bold;
+    }
+</style>

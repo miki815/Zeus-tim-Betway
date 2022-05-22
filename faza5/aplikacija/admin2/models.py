@@ -65,6 +65,8 @@ class Odigrano10Unizu(models.Model):
         db_table = 'odigrano10unizu'
 
 
+
+
 class Postavljenekvote(models.Model):
     idkvo = models.CharField(db_column='IDKvo', primary_key=True, max_length=18)  # Field name made lowercase.
     iduta = models.ForeignKey('Utakmiceunajavi', models.DO_NOTHING, db_column='IDUta', blank=True, null=True)  # Field name made lowercase.
@@ -149,7 +151,12 @@ class Zavrseneutakmice(models.Model):
         managed = False
         db_table = 'zavrseneutakmice'
 
+class Utakmiceutoku(models.Model):
+    iduta = models.OneToOneField(Utakmica, models.DO_NOTHING, db_column='IDUta', primary_key=True)  # Field name made lowercase.
 
+    class Meta:
+        managed = False
+        db_table = 'utakmiceutoku'
 class Tiketdogadjaj(models.Model):
     iddog = models.IntegerField(db_column='IDDog', primary_key=True)  # Field name made lowercase.
     odigrano = models.CharField(db_column='Odigrano', max_length=20, blank=True, null=True)  # Field name made lowercase.

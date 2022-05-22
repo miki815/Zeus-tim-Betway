@@ -42,23 +42,29 @@ def deset_u_nizu(request, userId):
 
 
 
-
-def isplati(request):
-    stanje=1000
+def isplati(request, userId):
+    k=(Korisnik.objects.get(pk=userId))
+    stanje=k.stanje
     iznos=0
+    poruka = "" +k.korisnickoime
     if (request.method == 'POST'):
         form = IsplataForm(request.POST)
         if (form.is_valid()):
             iznos = form.cleaned_data['iznos']
             if(stanje>=iznos):
                 stanje=stanje-iznos
-            context = {'form': form, 'stanje': stanje}
+                k.stanje=stanje
+                k.save()
+                poruka="Uspesno isplacivanje!"
+            else:
+                poruka="Nemate dovoljno novca za isplatu!"
+            context = {'form': form, 'stanje': stanje,'poruka': poruka }
             return render(request, 'igrac/profil.html', context)
-            # TODO ubaciti izbor u bazu, redirect na statistiku igre
     else:
         form = IsplataForm()
-    context = {'form': form, 'stanje': stanje}
+    context = {'form': form, 'stanje': stanje, 'poruka': poruka }
     return render(request, 'igrac/profil.html', context)
+
 
 def promenalozinke(request, userId):
     poruka=""
@@ -171,7 +177,7 @@ def prikaz_kvota(request, kvoterId, igracId):
          utakmice.append(kvota.iduta)
 
     if request.method == 'POST':
-        ukupna_kvota = 1;
+        ukupna_kvota = 1
         uplata = request.POST.get("fname")
         tiket = Tiket()
         tiket.save()
@@ -179,7 +185,7 @@ def prikaz_kvota(request, kvoterId, igracId):
             data_id = "test" + kvota.idkvo
             data = request.POST.get(data_id)
             if data:
-                ukupna_kvota *= float(data);
+                ukupna_kvota *= float(data)
                 par_na_tiketu = Tiketdogadjaj()
                 par_na_tiketu.odigrano = False
                 par_na_tiketu.iduta = kvota.iduta
@@ -202,7 +208,7 @@ def prikaz_kvota(request, kvoterId, igracId):
     return render(request, 'igrac/kvote.html', context)
 
 
-def uplati_tiket(request):
+def uplati_tiket(request,userId):
     return HttpResponse("todo")
 
 def statistika(request, userId):
@@ -216,7 +222,7 @@ def statistika(request, userId):
     context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'igrac/statistika.html', context)
 
-def najbolji(request):
+def najbolji(request, userId):
     korisnici=Korisnik.objects.all()
     s=Statistika.objects.all()
     najbolji=Statistika.objects.order_by('-ukupnodobijeno')
