@@ -84,7 +84,7 @@
   <p><b>Izaberite kvotera:</b></p>
  <ul>
     {% for kvoter in kvoteri %}
-        <li><a href="../kladionica/{{ kvoter.idkor }}/{{ userId }}"><b>{{ kvoter }}</b></a></li>
+        <li><a href="../kladionica/{{ kvoter.idkor }}/{{ userId }}"><b>{{ kvoter.korisnickoime }}</b></a></li>
     {% endfor %}
  <li>{{ kvote }}</li>
  </ul>
