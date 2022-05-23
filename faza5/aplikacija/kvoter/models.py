@@ -155,7 +155,7 @@ class Tiketdogadjaj(models.Model):
     odigrano = models.CharField(db_column='Odigrano', max_length=20, blank=True, null=True)  # Field name made lowercase.
     kvota = models.DecimalField(db_column='Kvota', max_digits=15, decimal_places=2)  # Field name made lowercase.
     ishod = models.IntegerField(db_column='Ishod', blank=True, null=True)  # Field name made lowercase.
-    iduta = models.ForeignKey(Utakmica, models.DO_NOTHING, db_column='IDUta')  # Field name made lowercase.
+    iduta = models.ForeignKey('Utakmica', models.DO_NOTHING, db_column='IDUta')  # Field name made lowercase.
     idtik = models.ForeignKey(Tiket, models.DO_NOTHING, db_column='IDTik')  # Field name made lowercase.
 
     class Meta:
@@ -169,29 +169,3 @@ class Utakmica10(models.Model):
     class Meta:
         managed = False
         db_table = 'utakmica10'
-
-
-class Viptiket(models.Model):
-    idvip = models.AutoField(db_column='IDVip', primary_key=True)  # Field name made lowercase.
-    datumuplate = models.DateField(db_column='DatumUplate', blank=True, null=True)  # Field name made lowercase.
-    iznosuplate = models.DecimalField(db_column='IznosUplate', max_digits=10, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    kvota = models.DecimalField(db_column='Kvota', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    dobitak = models.DecimalField(db_column='Dobitak', max_digits=15, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    idkor = models.ForeignKey(Igrac, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
-    idkvo = models.ForeignKey(Kvoter, models.DO_NOTHING, db_column='IDKvo', blank=True, null=True)  # Field name made lowercase.
-    idtik = models.ForeignKey(Tiket, models.DO_NOTHING, db_column='IDTik', blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'viptiket'
-
-class Vipkvote(models.Model):
-    idkvo = models.AutoField(db_column='IDKvo', primary_key=True)  # Field name made lowercase.
-    idtik = models.ForeignKey(Tiket, models.DO_NOTHING, db_column='IDTik', blank=True, null=True)  # Field name made lowercase.
-    idkor = models.ForeignKey(Kvoter, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
-    kvotaprolaz = models.DecimalField(db_column='KvotaProlaz', max_digits=5, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    kvotapad = models.DecimalField(db_column='KvotaPad', max_digits=5, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'vipkvote'
