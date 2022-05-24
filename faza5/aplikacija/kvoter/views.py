@@ -92,3 +92,80 @@ def statistika(request, userId):
     procenat_lose = round((podaci.brojprimljenihpromasenih / (podaci.brojprimljenihpogodjenih + podaci.brojprimljenihpromasenih)) * 100, 2)
     context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'kvoter/statistika.html', context)
+
+
+def prikazisvetikete(request, userId):
+
+
+    tiketi=Tiket.objects.all()
+    tiketi=list(tiketi)
+    tiketdogadjaji=Tiketdogadjaj.objects.all()
+    utakmice=Utakmica.objects.all()
+    unajavi= Utakmiceunajavi.objects.all()
+    nizindeksitiketa=[]
+    nadjeno=0
+    for t in tiketi:
+        i=-1
+        for td in tiketdogadjaji:
+            nadjeno=0
+            for u in unajavi:
+                if(td.iduta.pk == u.iduta.pk):
+                    nadjeno=1
+            if(nadjeno==0):
+                break
+        i=i+1
+        if(nadjeno==0):
+            nizindeksitiketa.append(i)
+
+    for t in nizindeksitiketa:
+        tiketi.pop(t)
+        for i in range(0,len(nizindeksitiketa)):
+            nizindeksitiketa[i]=nizindeksitiketa[i]-1
+
+
+    context={'tiketi': tiketi, 'tiketdogadjaji': tiketdogadjaji, 'utakmice': utakmice }
+    return render(request, 'kvoter/prikazsvihtiketa.html', context)
+
+def postavivipkvotu(request, userId):
+    greska = ""
+    if(request.method=='POST'):
+        form=VipKvoteForm(request.POST)
+        if(form.is_valid()):
+            idtik = form.cleaned_data['idtik']
+            pad = form.cleaned_data['pad']
+            prolaz = form.cleaned_data['prolaz']
+            nematiketa=0
+            tiket=0
+            try:
+                tiket = Tiket.objects.get(pk=idtik)
+            except:
+                nematiketa=1
+                greska="Tiket sa zadatim ID-em ne postoji!"
+
+            if(nematiketa==0):
+                vip = KvoterVipkvote()
+                vip.idtik = tiket
+                vip.idkor = Kvoter.objects.get(pk=userId)
+                vip.kvotaprolaz = float(prolaz)
+                vip.kvotapad = float(pad)
+
+                tiketdogadjaji = Tiketdogadjaj.objects.filter(idtik=tiket.idtik)
+                unajavi = Utakmiceunajavi.objects.all()
+                nadjeno = 0
+                for td in tiketdogadjaji:
+                    nadjeno = 0
+                    for u in unajavi:
+                        if (td.iduta.pk == u.iduta.pk):
+                            nadjeno = 1
+                    if (nadjeno == 0):
+                        greska = "Neke utakmice sa tiketa ID: "+idtik+"  su počele!"
+
+                        break
+                if (nadjeno == 1):
+                    greska = "Uspešno dodata vip kvota!"
+                    vip.save()
+
+
+    form=VipKvoteForm()
+    context={'form': form, 'greska': greska }
+    return render(request, 'kvoter/postavivipkvotu.html', context)
