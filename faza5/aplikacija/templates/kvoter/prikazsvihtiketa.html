@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+
+
+<table width="100%" cellspacing="0" cellpadding="0">
+    <tr height="50px"bgcolor="#FF8040">
+
+       <td width="33%" align="center" >
+
+           <font size="8"><b>Svi tiketi</b></font>
+       </td>
+
+    </tr>
+
+
+
+    <tr height="600px" bgcolor="#154360" >
+        <td class="b" colspan="3">
+             <table align="center" cellpadding="10px">
+
+           {% for tiket in tiketi %}
+              <tr>
+                    <td align="center">
+                        <h2>{{ "ID Tiketa:" }}
+                            &nbsp;&nbsp;&nbsp;
+                            {{ tiket.pk }} </h2>
+                        <hr/><br>
+                         {% for tiketdogadjaj in tiketdogadjaji %}
+
+                             {% for utakmica in utakmice %}
+                                 {% if tiketdogadjaj.iduta.pk == utakmica.pk and tiketdogadjaj.idtik.pk == tiket.pk%}
+                                     {{ utakmica.tim1 }}
+                                         &nbsp;  &nbsp;  &nbsp;  &nbsp;
+                                     {{ utakmica.tim2 }}
+                                        &nbsp;  &nbsp;  &nbsp;  &nbsp;
+                                     {{ tiketdogadjaj.odigrano }}
+                                       &nbsp;  &nbsp;  &nbsp;  &nbsp;
+                                      {{ utakmica.datumpocetka }}
+                                     <br>
+                                 {% endif %}
+                                 {% endfor %}
+                         {% endfor  %}
+                        <hr/>
+                    </td>
+              </tr>
+             {% endfor  %}
+
+
+    </table>
+        </td>
+    </tr>
+    <tr height="50px" bgcolor="#FF8040">
+        <td colspan="3" align="center">
+            <font size="7">
+                <b><i>Time to win!</i></b>
+            </font>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>
+
+<style>
+
+    .b{
+        width: 500px;
+        background-color: #154360;
+        color: black;
+        font-weight: bold;
+        font-size: larger;
+    }
+
+</style>
