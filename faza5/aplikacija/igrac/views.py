@@ -9,10 +9,31 @@ def index(request):
     return HttpResponse("Igrac ovde")
 
 def profil(request, userId):
-    status="NV"
-    stanje = 1000
+    igrac = Korisnik.objects.filter(idkor = userId)
+    igrac = list(igrac)
+    igrac = igrac[0]
+    status= "VIP" if igrac.stanje else "REGULAR"
+    stanje = igrac.stanje if igrac.stanje else 0
+    statistika = Statistika.objects.filter(idkor = userId)
+    statistika = list(statistika)
+    statistika = statistika[0]
+    brojPogodaka = statistika.brojpogodjenih
+    brojPromasaja = statistika.brojpromasenih
+    korisnickoIme = igrac.korisnickoime
+    iznos=0
+
+    if (request.method == 'POST'):
+        form = IsplataForm(request.POST)
+        if (form.is_valid()):
+            iznos = form.cleaned_data['iznos']
+            if(stanje>=iznos):
+                stanje=stanje-iznos
+                igrac.stanje = stanje
+                igrac.save()
+
     form = IsplataForm()
-    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId}
+    context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId, 'brojPogodaka': brojPogodaka,
+               'brojPromasaja': brojPromasaja, 'korisnickoIme': korisnickoIme}
     return render(request, 'igrac/profil.html', context)
 
 def deset_u_nizu(request, userId):
@@ -39,31 +60,6 @@ def deset_u_nizu(request, userId):
     utakmica = utakmica.utakmica10
     context = {'form': form, 'userId': userId,  'utakmica': utakmica}
     return render(request, 'igrac/desetunizu.html', context)
-
-
-
-def isplati(request, userId):
-    k=(Korisnik.objects.get(pk=userId))
-    stanje=k.stanje
-    iznos=0
-    poruka = "" +k.korisnickoime
-    if (request.method == 'POST'):
-        form = IsplataForm(request.POST)
-        if (form.is_valid()):
-            iznos = form.cleaned_data['iznos']
-            if(stanje>=iznos):
-                stanje=stanje-iznos
-                k.stanje=stanje
-                k.save()
-                poruka="Uspesno isplacivanje!"
-            else:
-                poruka="Nemate dovoljno novca za isplatu!"
-            context = {'form': form, 'stanje': stanje,'poruka': poruka }
-            return render(request, 'igrac/profil.html', context)
-    else:
-        form = IsplataForm()
-    context = {'form': form, 'stanje': stanje, 'poruka': poruka }
-    return render(request, 'igrac/profil.html', context)
 
 
 def promenalozinke(request, userId):
@@ -177,17 +173,19 @@ def prikaz_kvota(request, kvoterId, igracId):
          utakmice.append(kvota.iduta)
 
     if request.method == 'POST':
-        ukupna_kvota = 1
+        ukupna_kvota = 1;
         uplata = request.POST.get("fname")
         tiket = Tiket()
         tiket.save()
         for kvota in kvote:
             data_id = "test" + kvota.idkvo
+            odigrano_id = "odigrano" + kvota.idkvo
             data = request.POST.get(data_id)
+            odigrano = request.POST.get(odigrano_id)
             if data:
-                ukupna_kvota *= float(data)
+                ukupna_kvota *= float(data);
                 par_na_tiketu = Tiketdogadjaj()
-                par_na_tiketu.odigrano = False
+                par_na_tiketu.odigrano = odigrano
                 par_na_tiketu.iduta = kvota.iduta
                 par_na_tiketu.kvota = data
                 par_na_tiketu.idtik = tiket
@@ -222,7 +220,7 @@ def statistika(request, userId):
     context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'igrac/statistika.html', context)
 
-def najbolji(request, userId):
+def najbolji(request):
     korisnici=Korisnik.objects.all()
     s=Statistika.objects.all()
     najbolji=Statistika.objects.order_by('-ukupnodobijeno')
@@ -230,4 +228,62 @@ def najbolji(request, userId):
     context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih}
     return   render(request, 'igrac/najbolji.html', context)
 
+def prikaz_vip_kvotera(request, userId):
+    kvoteri = Korisnik.objects.all()
+    vip_kvoteri = []
+    for kvoter in kvoteri:
+        if kvoter.vip:
+            vip_kvoteri.append(kvoter)
+    context = {'kvoteri': vip_kvoteri, 'userId': userId}
+    return render(request, 'igrac/prikazVipKvotera.html', context)
 
+
+def prikaz_vip_kvota(request, kvoterId, igracId):
+    kvote = Vipkvote.objects.filter(idkor = kvoterId)
+    tiketi = []
+    igraci_tiketa = []
+    tiketi_podaci = [] # lista koja sadrzi liste odigranih tiketa
+    for kvota in kvote:
+         tiketi.append(kvota.idtik)
+    for tiket in tiketi:
+        tiket_dogadjaji = Tiketdogadjaj.objects.filter(idtik = tiket.idtik)
+        tiket_dogadjaji = list(tiket_dogadjaji)
+        utakmice = []
+        for dogadjaj in tiket_dogadjaji:
+            utakmica = dogadjaj.iduta
+            utakmica_podaci = []
+            utakmica_podaci.append(utakmica.tim1)
+            utakmica_podaci.append(utakmica.tim2)
+            utakmica_podaci.append(dogadjaj.odigrano)
+            utakmice.append(utakmica_podaci)
+        tiketi_podaci.append(utakmice)
+        igraci_tiketa.append(tiket.idkor)
+    if request.method == 'POST':
+        ukupna_kvota = 1;
+        uplata = request.POST.get("fname")
+        vip_tiket = Viptiket()
+        vip_tiket.save()
+        data = request.POST.get("kvota")
+        odigrano = request.POST.get("odigrano")
+        idKvote = request.POST.get("idKvote")
+        if data:
+            ukupna_kvota = float(data);
+        vip_tiket.kvota = ukupna_kvota
+        vip_tiket.iznosuplate = uplata
+        vip_tiket.dobitak = ukupna_kvota * int(uplata)
+        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
+        vip_tiket.idkvo = kvoter[0]
+        igrac = list(Igrac.objects.filter(idkor=igracId))
+        vip_tiket.idkor = igrac[0]
+        vip_tiket.datumuplate = date.today()
+        moja_kvota = list(Vipkvote.objects.filter(idkvo = idKvote))
+        moja_kvota = moja_kvota[0]
+        vip_tiket.idtik = moja_kvota.idtik
+        vip_tiket.save()
+        return HttpResponse("Vas tiket je uplacen")
+
+    kvote_tiketi = zip(kvote, tiketi)
+    kvote_igraci_tiketi = zip(kvote, igraci_tiketa, tiketi_podaci)
+    context={'kvote_tiketi': kvote_tiketi, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId, 'kvote': kvote,
+            'kvote_igraci_tiketi': kvote_igraci_tiketi, 'tiketi': tiketi_podaci }
+    return render(request, 'igrac/vipkvote.html', context)

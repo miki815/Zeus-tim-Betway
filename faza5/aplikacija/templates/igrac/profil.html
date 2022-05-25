@@ -24,7 +24,7 @@
         </td>
        <td width="33%" align="center" >
 
-           <font size="8"><b>Moj nalog</b></font>
+           <font size="8"><b>{{ korisnickoIme }}</b></font>
        </td>
        <td width="33%" align="right">
 
@@ -73,14 +73,13 @@
                         <div><b>Uspesnost</b></div>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-striped progress-bar-animated"
-                            style="width: 20%;">2</div>
+                            style="width: 20%;">{{ brojPogodaka }}</div>
                             <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
-                            style="width: 80%;">8</div>
+                            style="width: 80%;">{{ brojPromasaja }}</div>
                         </div>
                     </td>
                 </tr>
-                <form action="isplati" method="post">
-                    <tr>
+  <form action="{{ userId }}" method="post">                    <tr>
 
                         <td>
 
@@ -101,7 +100,7 @@
                         <td><b>Promena lozinke:</b></td>
                         <td >
                             <div class="linkovi">
-                                <a href="promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a>
+                                <a href="{{ userId }}/promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a>
                             </div>
                         </td>
                     </tr>
@@ -109,7 +108,7 @@
                         <td><b>Brisanje naloga:</b></td>
                         <td >
                             <div class="linkovi">
-                                <a href="brisanjenaloga" >Kliknuti ovde za brisanje naloga</a>
+                                <a href="{{ userId }}/brisanjenaloga" >Kliknuti ovde za brisanje naloga</a>
                             </div>
                         </td>
                     </tr>
@@ -130,14 +129,14 @@
 	 <tr>
                         <td colspan="2" >
                             <div class="linkovi">
-                                <a href="najbolji.html" class="linkovi" align='center'>Najbolji</a>
+                                <a href="najbolji" class="linkovi" align='center'>Najbolji</a>
                             </div>
                         </td>
                     </tr>
 	  <tr>
                         <td colspan="2" >
                             <div class="linkovi">
-                                <a href="postanivip.html" class="linkovi" align='center'>Postani VIP</a>
+                                <a href="{{ userId }}/postanivip" class="linkovi" align='center'>Postani VIP</a>
                             </div>
                         </td>
                     </tr>
@@ -158,7 +157,7 @@
  	                <tr>
                         <td colspan="2">
                             <div class="linkovi" >
-                                <a href="vipopklada.html" class="linkovi" align='center'>VIP opklada</a>
+                                <a href="prikazvipkvotera/{{ userId }}" class="linkovi" align='center'>VIP opklada</a>
                             </div>
                         </td>
                     </tr>
