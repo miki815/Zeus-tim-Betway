@@ -169,15 +169,3 @@ class Utakmica10(models.Model):
     class Meta:
         managed = False
         db_table = 'utakmica10'
-
-
-class KvoterVipkvote(models.Model):
-    idkvo = models.AutoField(db_column='IDKvo', primary_key=True)  # Field name made lowercase.
-    idtik = models.ForeignKey('Tiket', models.DO_NOTHING, db_column='IDTik', blank=True, null=True)  # Field name made lowercase.
-    idkor = models.ForeignKey(Kvoter, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
-    kvotaprolaz = models.DecimalField(db_column='KvotaProlaz', max_digits=5, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-    kvotapad = models.DecimalField(db_column='KvotaPad', max_digits=5, decimal_places=2, blank=True, null=True)  # Field name made lowercase.
-
-    class Meta:
-        managed = False
-        db_table = 'kvoter_vipkvote'
