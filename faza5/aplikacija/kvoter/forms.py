@@ -4,11 +4,6 @@ from django import forms
 class BrisanjeNalogaForm(forms.Form):
     lozinka = forms.CharField(label="Uneti lozinku")
 
-class VipKvoteForm(forms.Form):
-    idtik = forms.CharField(label="ID tiketa")
-    pad = forms.CharField(label="Pad")
-    prolaz = forms.CharField(label="Prolaz")
-
 class KvoteForm(forms.Form):
     prviTim=forms.CharField(label="Prvi tim")
     drugiTim = forms.CharField(label="Drugi tim")
