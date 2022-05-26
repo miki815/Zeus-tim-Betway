@@ -23,11 +23,18 @@
             
             <form action="">
                             
-                <a href="psi.html">
-                    <input type="button" value="Moj profil" class="button1">
+                <a href="../../igrac/{{ userId }}">
+                    <input type="button" value="Igrac" class="button1">
                </a>
-              
-            
+                <a href="statistika">
+                    <input type="button" value="Statistika" class="button1">
+               </a>
+                {% if vip %}
+                <a href="postavivipkvotu">
+                    <input type="button" value="Vip kvota" class="button1">
+               </a>
+                {% endif %}
+
             </form>
        </td>
     </tr>

@@ -47,7 +47,7 @@
       border-collapse: collapse;
       border-spacing: 0;
       width: 100%;
-      border: 1px solid #ddd;
+
     }
   
     th, td {
@@ -63,15 +63,14 @@
 </head>
 <body style="background-color:#154360">
 
-<table width="100%" cellspacing="0">
+<table width="100%" cellpadding="0px">
     <tr height="50px"bgcolor="#FF8040">
         <td width="50%" align="center">
             <font size="8"><b>Postani VIP</b></font>
        </td>
        <td width="50%" align="center">
             <form action="">                
-                <input type="button" value="Pocetna strana" class="button1">
-                <a href="psi.html">
+                <a href="../{{ userId }}">
                     <input type="button" value="Moj profil" class="button1">
                </a>               
             </form>
@@ -85,6 +84,7 @@
 <div class="centralni">
 <h1 id="msg"></h1>
 <form action="postanivip" method="post">
+    <h2 style="color: white">{{ poruka }}</h2>
   <p>Izaberite jednu od navedenih VIP ponuda</p>
     {% csrf_token %}
     {{ form }}

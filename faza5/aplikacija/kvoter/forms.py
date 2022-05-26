@@ -7,7 +7,7 @@ class BrisanjeNalogaForm(forms.Form):
 class KvoteForm(forms.Form):
     prviTim=forms.CharField(label="Prvi tim")
     drugiTim = forms.CharField(label="Drugi tim")
-    datum = forms.DateTimeField(label="Datum")
+    datum = forms.CharField(label="Datum")
 
     kec = forms.CharField(label="1")
     x = forms.CharField(label="x")
@@ -31,6 +31,11 @@ class KvoteForm(forms.Form):
 
 
 
+
+class VipKvoteForm(forms.Form):
+    idtik = forms.CharField(label="ID tiketa")
+    pad = forms.CharField(label="Pad")
+    prolaz = forms.CharField(label="Prolaz")
 
 
 

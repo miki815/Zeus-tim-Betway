@@ -31,10 +31,10 @@
             <table>
                 <tr>
                     <td>
-                           <a href="kladise.html">
+                           <a href="">
                           <input type="button" value="Igrac" class="button1">
  	       </a>
-                        <a href="kvoter.html">
+                        <a href="../kvoter/{{ userId }}/napravikvote">
                             <input type="button" value="Kvoter" class="button1" >
                         </a>
                     </td>
@@ -73,9 +73,9 @@
                         <div><b>Uspesnost</b></div>
                         <div class="progress">
                             <div class="progress-bar bg-success progress-bar-striped progress-bar-striped progress-bar-animated"
-                            style="width: 20%;">{{ brojPogodaka }}</div>
+                            style="width: {{ wPog }}%;">{{ brojPogodaka }}</div>
                             <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
-                            style="width: 80%;">{{ brojPromasaja }}</div>
+                            style="width: {{wProm}}%;">{{ brojPromasaja }}</div>
                         </div>
                     </td>
                 </tr>
@@ -122,14 +122,14 @@
                     <tr>
                         <td colspan="2" >
                             <div class="linkovi">
-                                <a href="istorijaodigranihutakmica.html" class="linkovi" align='center'> Istorija odigranih utakmica</a>
+                                <a href="{{ userId }}/istorija" class="linkovi" align='center'> Istorija odigranih utakmica</a>
                             </div>
                         </td>
                     </tr>
 	 <tr>
                         <td colspan="2" >
                             <div class="linkovi">
-                                <a href="najbolji" class="linkovi" align='center'>Najbolji</a>
+                                <a href="{{ userId }}/najbolji" class="linkovi" align='center'>Najbolji</a>
                             </div>
                         </td>
                     </tr>

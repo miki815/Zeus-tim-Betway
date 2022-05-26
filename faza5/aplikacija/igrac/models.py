@@ -180,6 +180,7 @@ class Viptiket(models.Model):
     idkor = models.ForeignKey(Igrac, models.DO_NOTHING, db_column='IDKor', blank=True, null=True)  # Field name made lowercase.
     idkvo = models.ForeignKey(Kvoter, models.DO_NOTHING, db_column='IDKvo', blank=True, null=True)  # Field name made lowercase.
     idtik = models.ForeignKey(Tiket, models.DO_NOTHING, db_column='IDTik', blank=True, null=True)  # Field name made lowercase.
+    odigrano = models.CharField(db_column='Odigrano', max_length=20, blank=True,null=True)  # Field name made lowercase.
 
     class Meta:
         managed = False
@@ -194,4 +195,14 @@ class Vipkvote(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'vipkvote'
+        db_table = 'kvoter_vipkvote'
+
+class Istorijautakmica(models.Model):
+    idis = models.AutoField(db_column='IDIs', primary_key=True)  # Field name made lowercase.
+    odigrano = models.CharField(db_column='Odigrano', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    ishod = models.IntegerField(db_column='Ishod', blank=True, null=True)  # Field name made lowercase.
+    idkor = models.ForeignKey('Korisnik', models.DO_NOTHING, db_column='IDKor')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'istorijautakmica'

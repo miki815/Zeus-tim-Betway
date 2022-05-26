@@ -15,9 +15,10 @@ urlpatterns = [
     path('kladionica/<int:kvoterId>/<int:igracId>', prikaz_kvota, name='kvote'),
     path('kladionica/uplatitiket', uplati_tiket, name='tiket'),
     path('statistika/<int:userId>', statistika, name='statistika'),
-    path('najbolji', najbolji, name='najbolji'),
+    path('<int:userId>/najbolji', najbolji, name='najbolji'),
     path('prikazvipkvotera/<int:userId>', prikaz_vip_kvotera, name='vipkvoteri'),
-    path('vip_kladionica/<int:kvoterId>/<int:igracId>', prikaz_vip_kvota, name='vipkvote')
+    path('vip_kladionica/<int:kvoterId>/<int:igracId>', prikaz_vip_kvota, name='vipkvote'),
+    path('<int:userId>/istorija', istorija, name='istorija'),
 ]
 
 """urlpatterns = [

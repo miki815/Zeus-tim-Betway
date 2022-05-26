@@ -12,13 +12,15 @@ def profil(request, userId):
     igrac = Korisnik.objects.filter(idkor = userId)
     igrac = list(igrac)
     igrac = igrac[0]
-    status= "VIP" if igrac.stanje else "REGULAR"
+    status= "VIP" if igrac.vip else "REGULAR"
     stanje = igrac.stanje if igrac.stanje else 0
     statistika = Statistika.objects.filter(idkor = userId)
     statistika = list(statistika)
     statistika = statistika[0]
     brojPogodaka = statistika.brojpogodjenih
     brojPromasaja = statistika.brojpromasenih
+    widthPogodaka = (brojPogodaka / (brojPogodaka + brojPromasaja)) * 100
+    widthPromasaja = (brojPromasaja / (brojPogodaka + brojPromasaja)) * 100
     korisnickoIme = igrac.korisnickoime
     iznos=0
 
@@ -33,7 +35,8 @@ def profil(request, userId):
 
     form = IsplataForm()
     context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId, 'brojPogodaka': brojPogodaka,
-               'brojPromasaja': brojPromasaja, 'korisnickoIme': korisnickoIme}
+               'brojPromasaja': brojPromasaja, 'korisnickoIme': korisnickoIme, 'wProm': widthPromasaja,
+               'wPog': widthPogodaka}
     return render(request, 'igrac/profil.html', context)
 
 def deset_u_nizu(request, userId):
@@ -133,6 +136,7 @@ def brisanjeporuka(request,userId ):
 
 
 def postanivip(request, userId):
+    poruka=""
     korisnik = Korisnik.objects.get(pk=userId)
     stanje = korisnik.stanje
     v=korisnik.vip
@@ -141,22 +145,29 @@ def postanivip(request, userId):
             form = VipForm(request.POST)
             if (form.is_valid()):
                 x = form.cleaned_data['vip']
+                v=0
                 if (x == '1'):
                     if (stanje >= 1000):
                         stanje = stanje - 1000
+                        v=30
 
                 if (x == '2'):
                     if (stanje >= 5000):
                         stanje = stanje - 5000
+                        v=183
                 if (x == '3'):
                     if (stanje >= 9000):
                         stanje = stanje - 9000
-                korisnik.vip = 1
-                korisnik.stanje=stanje
-                korisnik.save()
-
+                        v=365
+                if(v):
+                    korisnik.vip = v
+                    korisnik.stanje=stanje
+                    korisnik.save()
+                    poruka="Uspesno ste postali VIP korisnik!"
+                else:
+                    poruka="Nemate dovoljno novca da postanete vip"
     form=VipForm()
-    context={'form': form, 'stanje': stanje}
+    context={'form': form, 'stanje': stanje, 'poruka': poruka, 'userId': userId}
     return render(request, 'igrac/postanivip.html', context)
 
 def prikaz_kvotera(request, userId):
@@ -189,6 +200,7 @@ def prikaz_kvota(request, kvoterId, igracId):
                 par_na_tiketu.iduta = kvota.iduta
                 par_na_tiketu.kvota = data
                 par_na_tiketu.idtik = tiket
+                par_na_tiketu.ishod = -1
                 par_na_tiketu.save()
         tiket.kvota = ukupna_kvota
         tiket.iznosuplate = uplata
@@ -199,7 +211,8 @@ def prikaz_kvota(request, kvoterId, igracId):
         tiket.idkor = igrac[0]
         tiket.datumuplate = date.today()
         tiket.save()
-        return HttpResponse("Vas tiket je uplacen")
+        poruka="Uspešno ste uplatili tiket!"
+
 
     kvote_utakmice = zip(kvote, utakmice)
     context={'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId}
@@ -217,15 +230,15 @@ def statistika(request, userId):
     podaci = stat_list[0]
     procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
     procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
-    context = {'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
+    context = {'userId': userId, 'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'igrac/statistika.html', context)
 
-def najbolji(request):
+def najbolji(request, userId):
     korisnici=Korisnik.objects.all()
     s=Statistika.objects.all()
     najbolji=Statistika.objects.order_by('-ukupnodobijeno')
     brojprimljenih = Statistika.objects.order_by('-brojprimljenihpogodjenih')
-    context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih}
+    context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih, 'userId': userId}
     return   render(request, 'igrac/najbolji.html', context)
 
 def prikaz_vip_kvotera(request, userId):
@@ -276,6 +289,7 @@ def prikaz_vip_kvota(request, kvoterId, igracId):
         igrac = list(Igrac.objects.filter(idkor=igracId))
         vip_tiket.idkor = igrac[0]
         vip_tiket.datumuplate = date.today()
+        vip_tiket.odigrano = odigrano
         moja_kvota = list(Vipkvote.objects.filter(idkvo = idKvote))
         moja_kvota = moja_kvota[0]
         vip_tiket.idtik = moja_kvota.idtik
@@ -287,3 +301,13 @@ def prikaz_vip_kvota(request, kvoterId, igracId):
     context={'kvote_tiketi': kvote_tiketi, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId, 'kvote': kvote,
             'kvote_igraci_tiketi': kvote_igraci_tiketi, 'tiketi': tiketi_podaci }
     return render(request, 'igrac/vipkvote.html', context)
+
+def istorija(request, userId):
+    utakmice=Istorijautakmica.objects.filter(idkor=userId)
+
+    context={'utakmice': utakmice, 'userId': userId}
+    return  render(request, 'igrac/istorijaodigranih.html', context)
+
+
+
+
