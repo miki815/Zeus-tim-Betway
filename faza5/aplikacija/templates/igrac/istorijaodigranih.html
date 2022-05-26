@@ -6,5 +6,71 @@
 </head>
 <body>
 
+<table width="100%" cellspacing="0px" >
+    <tr height="150px"bgcolor="#FF8040">
+
+       <td align="center" colspan="2">
+
+           <font size="8"><b> Istorija odigranih utakmica</b></font>
+       </td>
+
+    </tr>
+
+    <tr style="background-color: #154360" >
+           <td>
+               <table align="center" width="50%" cellspacing="10px">
+                     {% for utakmica in utakmice %}
+                         <tr>
+
+                            {% if utakmica.ishod == 1 %}
+                                 <td style="background-color: limegreen" class="ut">{{ utakmica.odigrano }}</td>
+                            {% endif %}
+                            {% if utakmica.ishod == 0 %}
+                                 <td style="background-color: red" class="ut">{{ utakmica.odigrano }}</td>
+                            {% endif %}
+                            {% if utakmica.ishod == -1 %}
+                                 <td style="background-color: lightgray" class="ut">{{ utakmica.odigrano }}</td>
+                            {% endif %}
+                         </tr>
+                     {% endfor %}
+                </table>
+           </td>
+            <td class="legenda" >
+                <table cellspacing="10px">
+                    <tr>
+                        <td style="background-color: red">Promašaj</td>
+                    </tr>
+                     <tr>
+                            <td style="background-color: limegreen">Pogodak</td>
+                    </tr>
+                     <tr>
+                           <td style="background-color: lightgray">Utakmica još uvek nije završena</td>
+                    </tr>
+                </table>
+            </td>
+    </tr>
+</table>
+
 </body>
 </html>
+
+<style>
+    td.ut{
+        border-radius: 10px;
+        text-align: center;
+        font-weight: bold;
+        width: 80%;
+        height: 50px;
+    }
+
+    .legenda{
+
+        text-align: center;
+        font-weight: bold;
+        width: 30%;
+        height: 50px;
+    }
+    .legenda td{
+        border-radius: 10px;
+    }
+</style>

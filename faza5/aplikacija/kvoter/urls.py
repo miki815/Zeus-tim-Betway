@@ -6,6 +6,7 @@ urlpatterns = [
     path('', index, name='index'),
     path('<int:userId>/napravikvote', napravikvote, name='napravikvote'),
     path('<int:userId>/prikaziaktivneutakmice', prikaziaktivneutakmice, name='prikaziaktivneutakmice'),
-    path('statistika/<int:userId>', statistika, name='statistika'),
-
+    path('<int:userId>/statistika', statistika, name='statistika'),
+    path('<int:userId>/prikazisvetikete', prikazisvetikete, name='prikazisvetikete'),
+    path('<int:userId>/postavivipkvotu', postavivipkvotu, name='postavivipkvotu'),
 ]

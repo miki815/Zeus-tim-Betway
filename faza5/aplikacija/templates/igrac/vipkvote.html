@@ -36,7 +36,8 @@
        height: 100px;
        background-color: #FF8040;
        text-align: center;
-       font-size: 40px
+       font-size: 40px;
+        margin-bottom: 0px;
     }
 
     .row::after {
@@ -49,7 +50,7 @@
       border-collapse: collapse;
       border-spacing: 0;
       width: 100%;
-      border: 1px solid #ddd;
+
     }
 
     th, td {
@@ -63,7 +64,7 @@
      }
     </style>
 </head>
-<body style="background-color:#154360">
+<body  style="background-color:#154360">
 
 <table width="100%" cellspacing="0">
     <tr height="50px"bgcolor="#FF8040">
@@ -72,7 +73,7 @@
        </td>
        <td width="50%" align="center">
             <form action="">
-                <input type="button" value="Pocetna strana" class="button1">
+
                 <a href="psi.html">
                     <input type="button" value="Moj profil" class="button1">
                </a>
@@ -85,7 +86,7 @@
   <div class="column">
     <table>
       <tr>
-        <th>Datum i vreme</th>
+
         <th>Igrac</th>
         <th>Tiket</th>
         <th>Prolaz</th>
@@ -95,7 +96,7 @@
 
         {% for kvota, igrac, utakmice in kvote_igraci_tiketi %}
       <tr>
-        <td>datum</td>
+
         <td>{{ igrac.idkor}}</td>
       <td>
           {% for utakmica in utakmice %}
@@ -117,7 +118,7 @@
 <h2>Ukupna kvota</h2>
 <h3 id="kv">1</h3>
 
-<form action="../{{ kvoterId }}/{{ igracId }}" method="post">
+<form action="../{{ kvoterId }}/{{ igracId }}" method="post" style="text-align: center">
   {% csrf_token %}
         <input type="hidden" value=0 name="kvota" id="kvota">
         <input type="hidden" value=0 name="odigrano" id="odigrano">
@@ -131,7 +132,7 @@
 <div class="bottom">
 <table>
     <tr>
-        <td colspan="2"><b><i>Time to win!</i></b></td>
+        <td colspan="2" style="text-align: center"><b><i>Time to win!</i></b></td>
     </tr>
 </table>
 </div>

@@ -100,6 +100,7 @@ def ugasiutakmicu(request):
             tim1 = form.cleaned_data['tim1']
             tim2 = form.cleaned_data['tim2']
             ishod = form.cleaned_data['ishod']
+            ishod1=ishod
             datum=form.cleaned_data['datum']
             ishod=ishod.split(' ')
             utakmica= Utakmica.objects.get(tim1=tim1, tim2=tim2, datumpocetka=datum)
@@ -124,8 +125,21 @@ def ugasiutakmicu(request):
                 else:
                     tiketd.ishod=0
                 tiketd.save()
+                t=tiketd.idtik
+                t=Korisnik.objects.get(pk=t.idkor.idkor.idkor)
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                kraj = "Datum: " + datum + "    |   " + tim1 + " : " + tim2 + "    |   Ishod: " + ishod1
+                istorija = Istorijautakmica()
+                istorija.ishod = tiketd.ishod
+                istorija.idkor = t
+                istorija.odigrano =  kraj
+                istorija.save()
+
+                # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
             tiketi=Tiket.objects.all()
             for tiket in tiketi:
+
                 tiketdog=Tiketdogadjaj.objects.filter(idtik=tiket)
                 dobijeno=1
                 for t in tiketdog:
@@ -136,30 +150,30 @@ def ugasiutakmicu(request):
                 if(dobijeno==1):
                     for t in tiketdog:
                         t.delete()
-
                     s=tiket.idkor.pk
                     korisnik=Korisnik.objects.get(pk=s)
                     korisnik.stanje=korisnik.stanje+tiket.iznosuplate*tiket.kvota
+                    #dodati korisniku statistiku
                     korisnik.save()
+
                     tiket.delete()
 
                     # povecati broj dobijenih kvoteru ili broj izgubljenih
                     s=tiket.idkvo.idkor.pk
                     kvoter = Korisnik.objects.get(pk=s)
                     kvoter.stanje = kvoter.stanje - tiket.iznosuplate * tiket.kvota
+
                     statistika = Statistika.objects.get(idkor=s)
                     statistika.brojprimljenihpromasenih = statistika.brojprimljenihpromasenih + 1
                     kvoter.save()
                     statistika.save()
                     statistika=Statistika.objects.get(idkor=tiket.idkor.pk)
-                    statistika.brojpogodjenih=statistika.brojpogodjenih+1
                     statistika.save()
                 if(dobijeno==0):
                     for t in tiketdog:
                         t.delete()
                     tiket.delete()
                     statistika = Statistika.objects.get(idkor=tiket.idkor.idkor)
-                    statistika.brojpromasenih = statistika.brojpromasenih + 1
                     statistika.save()
                     statistika = Statistika.objects.get(idkor=tiket.idkvo.idkor)
                     statistika.brojprimljenihpromasenih = statistika.brojprimljenihpromasenih + 1

@@ -175,3 +175,14 @@ class Utakmica10(models.Model):
     class Meta:
         managed = False
         db_table = 'utakmica10'
+
+
+class Istorijautakmica(models.Model):
+    idis = models.AutoField(db_column='IDIs', primary_key=True)  # Field name made lowercase.
+    odigrano = models.CharField(db_column='Odigrano', max_length=100, blank=True, null=True)  # Field name made lowercase.
+    ishod = models.IntegerField(db_column='Ishod', blank=True, null=True)  # Field name made lowercase.
+    idkor = models.ForeignKey('Korisnik', models.DO_NOTHING, db_column='IDKor')  # Field name made lowercase.
+
+    class Meta:
+        managed = False
+        db_table = 'istorijautakmica'
