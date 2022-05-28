@@ -192,6 +192,7 @@ def ugasiutakmicu(request):
 
 def startujutakmicu(request):
     poruka=''
+    x=1
     form = StartujUtakmicuForm()
     if(request.method=='POST'):
         form=StartujUtakmicuForm(request.POST)
@@ -199,17 +200,24 @@ def startujutakmicu(request):
             tim1 = form.cleaned_data['tim1']
             tim2 = form.cleaned_data['tim2']
             datumvreme = form.cleaned_data['datum']
-            utakmica=Utakmica.objects.get(tim1=tim1, tim2=tim2, datumpocetka=datumvreme)
-            utakmicaun=Utakmiceunajavi.objects.get(pk=utakmica)
-            if(utakmicaun):
-                utakmicaun.delete()
-                u=Utakmiceutoku()
-                u.pk=utakmica.iduta
-                u.save()
-                poruka="Uspesno ste startovali utakmicu"
-            else:
-                poruke="Utakmica ne postoji!"
+            try:
 
+                utakmica=Utakmica.objects.get(tim1=tim1, tim2=tim2, datumpocetka=datumvreme)
+
+            except:
+                poruka = "Utakmica ne postoji!"
+                x=0
+
+            if(x!=0):
+               utakmicaun = Utakmiceunajavi.objects.get(pk=utakmica)
+               if (utakmicaun):
+                   utakmicaun.delete()
+                   u = Utakmiceutoku()
+                   u.pk = utakmica.iduta
+                   u.save()
+                   poruka = "Uspesno ste startovali utakmicu"
+               else:
+                   poruka = "Utakmica ne postoji!"
 
     context={
         'form': form,
