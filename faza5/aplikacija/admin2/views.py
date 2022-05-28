@@ -67,8 +67,13 @@ def dodajutakmicu10(request):
             if(tim1 and tim2):
                 ut = "" + tim1 + " - " + tim2
                 utakmica = Utakmica10.objects.all()
-                utakmica=utakmica[0]
-                utakmica.utakmica10=ut
+                if(len(utakmica)==0):
+                    utakmica=Utakmica10()
+                    utakmica.utakmica10=ut
+                else:
+                    utakmica[0].delete()
+                    utakmica = Utakmica10()
+                    utakmica.utakmica10 = ut
                 utakmica.save()
 
     form=DodavanjeUtakmice10Form()
