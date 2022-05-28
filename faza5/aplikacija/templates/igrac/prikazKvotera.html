@@ -71,8 +71,7 @@
        </td>
        <td width="50%" align="center">
             <form action="">
-                <input type="button" value="Pocetna strana" class="button1">
-                <a href="psi.html">
+                <a href="../{{ userId }}">
                     <input type="button" value="Moj profil" class="button1">
                </a>
             </form>
@@ -86,7 +85,6 @@
     {% for kvoter in kvoteri %}
         <li><a href="../kladionica/{{ kvoter.idkor }}/{{ userId }}"><b>{{ kvoter.korisnickoime }}</b></a></li>
     {% endfor %}
- <li>{{ kvote }}</li>
  </ul>
 
 </div>
