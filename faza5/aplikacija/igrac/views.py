@@ -180,12 +180,24 @@ def prikaz_kvotera(request, userId):
 def prikaz_kvota(request, kvoterId, igracId):
     kvote = Postavljenekvote.objects.filter(idkor = kvoterId)
     utakmice = []
+    poruka = 0;
     for kvota in kvote:
          utakmice.append(kvota.iduta)
+    kvote_utakmice = zip(kvote, utakmice)
 
     if request.method == 'POST':
+        igrac = list(Igrac.objects.filter(idkor=igracId))
+        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
+        korisnik = list(Korisnik.objects.filter(idkor=igracId))
+        korisnikKvoter = list(Korisnik.objects.filter(idkor=kvoterId))
         ukupna_kvota = 1;
         uplata = request.POST.get("fname")
+        if korisnik[0].stanje < int(uplata):
+            poruka = "Nemate dovoljno novca da uplatite tiket!"
+            return render(request, 'igrac/kvote.html', {'poruka': poruka,'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId})
+        if int(uplata) < 20:
+            poruka = "Minimalna uplata iznosi 20!"
+            return render(request, 'igrac/kvote.html', {'poruka': poruka, 'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId})
         tiket = Tiket()
         tiket.save()
         for kvota in kvote:
@@ -193,7 +205,7 @@ def prikaz_kvota(request, kvoterId, igracId):
             odigrano_id = "odigrano" + kvota.idkvo
             data = request.POST.get(data_id)
             odigrano = request.POST.get(odigrano_id)
-            if data:
+            if data != "nula":
                 ukupna_kvota *= float(data);
                 par_na_tiketu = Tiketdogadjaj()
                 par_na_tiketu.odigrano = odigrano
@@ -202,20 +214,31 @@ def prikaz_kvota(request, kvoterId, igracId):
                 par_na_tiketu.idtik = tiket
                 par_na_tiketu.ishod = -1
                 par_na_tiketu.save()
+        if(ukupna_kvota == 1):
+            tiket.delete();
+            poruka = "Niste izabrali tipove!"
+            return render(request, 'igrac/kvote.html', {'poruka': poruka, 'kvote_utakmice': kvote_utakmice,
+                                                        'kvoterId': kvoterId, 'kvote': kvote,'igracId': igracId})
+        if ukupna_kvota * int(uplata) + int(uplata) >  korisnikKvoter[0].stanje:
+            poruka = "Kvoter nema novca da vam isplati dobitak! Max uplata za ovaj tiket: " + str(float(korisnikKvoter[0].stanje) / ukupna_kvota)
+            context = {'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId,
+                   'poruka': poruka}
+            return render(request, 'igrac/kvote.html', context)
+        korisnik[0].stanje -= int(uplata)
+        korisnik[0].save()
+        korisnikKvoter[0].stanje += int(uplata)
+        korisnikKvoter[0].save()
         tiket.kvota = ukupna_kvota
         tiket.iznosuplate = uplata
         tiket.dobitak = ukupna_kvota * int(uplata)
-        kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
         tiket.idkvo = kvoter[0]
-        igrac = list(Igrac.objects.filter(idkor=igracId))
         tiket.idkor = igrac[0]
         tiket.datumuplate = date.today()
         tiket.save()
         poruka="Uspešno ste uplatili tiket!"
 
 
-    kvote_utakmice = zip(kvote, utakmice)
-    context={'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId}
+    context={'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId, 'poruka': poruka}
     return render(request, 'igrac/kvote.html', context)
 
 
