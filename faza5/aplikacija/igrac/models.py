@@ -195,7 +195,7 @@ class Vipkvote(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kvoter_vipkvote'
+        db_table = 'vipkvote'
 
 class Istorijautakmica(models.Model):
     idis = models.AutoField(db_column='IDIs', primary_key=True)  # Field name made lowercase.

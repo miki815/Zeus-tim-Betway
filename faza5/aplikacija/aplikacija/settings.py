@@ -84,9 +84,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'betway',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '1billion1',
         'HOST': '127.0.0.1',
-        'PORT': '3306'
+        'PORT': '3308'
     }
 }
 

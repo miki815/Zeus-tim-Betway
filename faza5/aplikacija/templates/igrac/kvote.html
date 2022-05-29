@@ -151,16 +151,14 @@
 <form action="../{{ kvoterId }}/{{ igracId }}" method="post" style="text-align: center">
   {% csrf_token %}
     {% for kvota in kvote %}
-        <input type="hidden" value=0 name="test{{kvota.idkvo}}" id="test{{kvota.idkvo}}">
+        <input type="hidden" value="nula" name="test{{kvota.idkvo}}" id="test{{kvota.idkvo}}">
         <input type="hidden" value=0 name="odigrano{{kvota.idkvo}}" id="odigrano{{kvota.idkvo}}">
     {% endfor %}
 
   <label for="fname" style="color: #59FF37">Uplata (min 20):</label><br>
   <input type="text" id="fname" name="fname" value="100"><br>
   <input  type="submit"  value="Pošalji tiket">
-    <h2 style="color: white">
-        {{ poruka }}
-    </h2>
+
 </form>
 
 <div class="bottom">
@@ -174,6 +172,8 @@
 <script>
 
 window.onload = function(){
+    var poruka = "{{ poruka }}";
+    if(poruka != 0) alert(poruka);
 
     var all = document.getElementsByClassName("kvote");
     for (var i=0;i<all.length;i++) {
