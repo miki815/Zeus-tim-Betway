@@ -45,7 +45,7 @@ class Korisnik(models.Model):
         db_table = 'korisnik'
 
     def __str__(self):
-        return f"{self.idkor}: {self.korisnickoime}"
+        return f"{self.korisnickoime}"
 
 
 class Kvoter(models.Model):

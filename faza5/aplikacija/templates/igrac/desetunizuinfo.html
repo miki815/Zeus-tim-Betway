@@ -47,7 +47,8 @@
       border-collapse: collapse;
       border-spacing: 0;
       width: 100%;
-
+      border: 1px solid #ddd;
+      background-color:  #FF8040;
     }
 
     th, td {
@@ -55,8 +56,7 @@
       padding: 16px;
     }
 
-
-    h2, h3, p{
+    h2, p{
         text-align: center;
         color: white;
     }
@@ -71,23 +71,27 @@
        </td>
        <td width="50%" align="center">
                 <a href="../{{ userId }}">
-                <input type="button" value="Moj profil" class="button1">
+                    <input type="button" value="Moj profil" class="button1">
                </a>
        </td>
     </tr>
 </table>
+<h2>Vas izbor je sacuvan. Srecno!</h2>
+<p>Najvise pogodaka</p>
 
-<h2>Izaberite tip za danasnju utakmicu</h2>
-<h3>Vas trenutni skor: {{ brojPogodaka }}</h3>
-<div class="centralni">
-<form action="{{ userId }}" method="post">
-<p>{{ utakmica}}</p>
-    {% csrf_token %}
-    {{ form }}
-    <input  type="submit"  value="Odigraj">
-</form>
-</div>
+<table>
+  <tr>
+    <th>Korisnicko ime</th>
+    <th>Pogodaka u nizu</th>
+  </tr>
+    {% for igrac in igraci %}
+  <tr>
+    <td>{{ igrac.idkor }}</td>
+    <td>{{ igrac.brojpogodaka }}</td>
+  </tr>
+    {% endfor %}
 
+</table>
 
 <div class="bottom">
 <table>
