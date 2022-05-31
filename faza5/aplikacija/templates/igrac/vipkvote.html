@@ -69,15 +69,12 @@
 <table width="100%" cellspacing="0">
     <tr height="50px"bgcolor="#FF8040">
         <td width="50%" align="center">
-            <font size="8"><b>Kladjenje</b></font>
+            <font size="8"><b>Vip kladjenje</b></font>
        </td>
        <td width="50%" align="center">
-            <form action="">
-
-                <a href="psi.html">
+                <a href="../../{{ igracId }}">
                     <input type="button" value="Moj profil" class="button1">
                </a>
-            </form>
        </td>
     </tr>
 </table>
@@ -140,6 +137,9 @@
 <script>
 
 window.onload = function(){
+
+    var poruka = "{{ poruka }}";
+    if(poruka != 0) alert(poruka);
 
     var all = document.getElementsByClassName("kvote");
     for (var i=0;i<all.length;i++) {

@@ -45,7 +45,7 @@ class Korisnik(models.Model):
         db_table = 'korisnik'
 
     def __str__(self):
-        return f"{self.idkor}: {self.korisnickoime}"
+        return f"{self.korisnickoime}"
 
 
 class Kvoter(models.Model):
@@ -195,7 +195,7 @@ class Vipkvote(models.Model):
 
     class Meta:
         managed = False
-        db_table = 'kvoter_vipkvote'
+        db_table = 'vipkvote'
 
 class Istorijautakmica(models.Model):
     idis = models.AutoField(db_column='IDIs', primary_key=True)  # Field name made lowercase.
