@@ -10,7 +10,10 @@ class VipForm(forms.Form):
     vip = forms.ChoiceField(choices=VIP, widget=forms.RadioSelect)
 
 class IsplataForm(forms.Form):
-    iznos=forms.IntegerField(label="Uneti iznos za isplatu: ")
+    iznos=forms.IntegerField(label="Uneti iznos za isplatu: ", initial=0)
+
+class UplataForm(forms.Form):
+    uplata=forms.IntegerField(label="Uneti iznos za uplatu: ", initial=0)
 
 class PromenaLozinkeForm(forms.Form):
     lozinka0 = forms.CharField(label="Stara lozinka")
