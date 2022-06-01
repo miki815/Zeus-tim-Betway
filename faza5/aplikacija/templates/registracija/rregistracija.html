@@ -22,6 +22,7 @@
         <tr>
            <td align="right">
               <form action="">
+
                   {# <a href={% url 'logovanje' %}><input type="button" value="Prijavi se"></a> #}
               </form> 
            </td> 
@@ -80,10 +81,20 @@
                             </center>
                     </td>
                 </tr>
-                <tr align="right">
-                    <td colspan="2">
+                <tr align="center">
+
+                    <td colspan="">
                             <input type="submit" value="Potvrdi">
                     </td>
+                </tr>
+
+
+                <tr align="center">
+                   <form action="logovanje" method="get">
+                        <td>
+                        <b>Imate nalog? Prijavite se <input type="submit" value="ovde">!</b>
+                        </td>
+                   </form>
                 </tr>
             </table></td>
         </tr>

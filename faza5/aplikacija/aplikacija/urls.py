@@ -21,4 +21,5 @@ urlpatterns = [
     path('igrac/', include('igrac.urls')),
     path('kvoter/', include('kvoter.urls')),
     path('admin2/', include('admin2.urls')),
+    path('', include('igrac.urls')),
 ]

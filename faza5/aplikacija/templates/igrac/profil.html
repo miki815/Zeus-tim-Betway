@@ -79,7 +79,8 @@
                         </div>
                     </td>
                 </tr>
-  <form action="{{ userId }}" method="post">                    <tr>
+  <form action="{{ userId }}" method="post">
+      <tr>
 
                         <td>
 
@@ -94,6 +95,23 @@
 
                         </td>
                     </tr>
+                </form>
+                <form action="{{ userId }}" method="post">
+
+                    <tr>
+                     <td>
+
+                                {% csrf_token %}
+                                {{ form1 }}
+
+
+                        </td>
+                        <td align="center" colspan="2">
+
+                                <input type="submit" value="Uplati" background-color="#4CAF50">
+
+                        </td>
+                </tr>
                 </form>
 
                     <tr>
