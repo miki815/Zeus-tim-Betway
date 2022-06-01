@@ -1,0 +1,112 @@
+<!--Anja Kovačević-->
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'style.css' %}">
+    <title>Document</title>
+</head>
+<body >
+<form method="post">
+        {% csrf_token %}
+    <table width="100%" bgcolor="#154360">
+        
+        <tr>
+            <td>
+                <div align="center"><font size="15" align="right">REGISTRACIJA</font></div>
+            </td>
+        </tr>
+        <tr>
+           <td align="right">
+              <form action="">
+
+                  {# <a href={% url 'logovanje' %}><input type="button" value="Prijavi se"></a> #}
+              </form> 
+           </td> 
+        </tr>
+        <tr>
+            <td>
+            <table align="center" width="60%" bgcolor="#FF8040">
+                <tr align="center">
+                    <td >
+                        <font size="5">Unesite podatke</font>
+                        <hr>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                         <center>
+                            <table width="50%" cellspacing="15" cellpading="0" bgcolor="#FF8040">
+                                <tr align="right" aria-colspan="2">
+
+                                         {{greska}}
+
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">Ime: </td>
+                                    <td><input type="text" name="ime"></td>
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">Prezime: </td>
+                                    <td><input type="text" name="prezime"></td>
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">Korisničko ime: </td>
+                                    <td><input type="text" name="korime"></td>
+
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">Email: </td>
+                                    <td><input type="email" name="email"></td>
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">Lozinka: </td>
+                                        <td><input type="password" name="loz"></td>
+                                </tr>
+                                <tr align="center">
+                                    <td align="right">JMBG: </td>
+                                        <td><input type="text" name="jmbg"></td>
+                                </tr>
+                                <!--<tr align="center">
+                                    <td align="right">Broj telefona: </td>
+                                    <form method="post">
+
+                                        <td></td>
+                                    </form>
+                                </tr>-->
+                            </table>
+                            </center>
+                    </td>
+                </tr>
+                <tr align="center">
+
+                    <td colspan="">
+                            <input type="submit" value="Potvrdi">
+                    </td>
+                </tr>
+
+
+                <tr align="center">
+                   <form action="logovanje" method="get">
+                        <td>
+                        <b>Imate nalog? Prijavite se <input type="submit" value="ovde">!</b>
+                        </td>
+                   </form>
+                </tr>
+            </table></td>
+        </tr>
+        <tr>
+            <td>&nbsp;</td>
+        </tr>
+        <tr class="slika" height="260" width="1520">
+            <td>
+            </td>
+        </tr>
+
+    </table>
+    </form>
+</body>
+</html>

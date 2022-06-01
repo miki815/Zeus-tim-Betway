@@ -1,0 +1,260 @@
+<!--Mihailo Milenkovic mm190117-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    .row {
+      margin-left:-5px;
+      margin-right:-5px;
+    }
+
+    .column {
+      float: left;
+      width: 100%;
+      padding: 5px;
+      background-color: white;
+    }
+
+    .bottom{
+       position: absolute;
+       bottom:0px;
+       width: 100%;
+       height: 100px;
+       background-color: #FF8040;
+       text-align: center;
+       font-size: 40px
+    }
+
+    .row::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 16px;
+    }
+
+    h2, h3 {
+      color: #59FF37;
+      text-align: center;
+     }
+    </style>
+</head>
+<body style="background-color:#154360">
+
+<table width="100%" cellspacing="0">
+    <tr height="50px"bgcolor="#FF8040">
+        <td width="50%" align="center">
+            <font size="8"><b>Kladjenje</b></font>
+       </td>
+       <td width="50%" align="center">
+                <a href="../../{{ igracId }}">
+                    <input type="button" value="Moj profil" class="button1">
+               </a>
+       </td>
+    </tr>
+</table>
+
+
+<div class="row">
+  <div class="column">
+    <table>
+      <tr>
+        <th>Datum i vreme</th>
+        <th>Tim1</th>
+        <th>Tim2</th>
+        <th>1</th>
+        <th>x</th>
+        <th>2</th>
+        <th>1-1</th>
+        <th>1-x</th>
+        <th>1-2</th>
+        <th>x-1</th>
+        <th>x-x</th>
+        <th>x-2</th>
+        <th>2-1</th>
+        <th>2-x</th>
+        <th>x-2</th>
+        <th>1g</th>
+        <th>2g</th>
+        <th>xg</th>
+        <th style="display: none">idkvo</th>
+      </tr>
+
+
+
+        {% for kvota, utakmica in kvote_utakmice %}
+
+            <tr>
+            <!--
+                <td>{{ utakmica.iduta.datumpocetka }}</td>
+                <td>{{ utakmica.iduta.tim1 }}</td>
+                <td>{{ utakmica.iduta.tim2 }}</td>
+                -->
+                <td style="text-align: center">{{ utakmica.datumpocetka }}</td>
+                <td style="text-align: center">{{ utakmica.tim1 }}</td>
+                <td style="text-align: center">{{ utakmica.tim2 }}</td>
+                <td class = "kvote">{{ kvota.kvota1 }}</td>
+                <td class = "kvote">{{ kvota.kvotax }}</td>
+                <td class = "kvote">{{ kvota.kvota2 }}</td>
+                <td class = "kvote">{{ kvota.kvota11 }}</td>
+                <td class = "kvote">{{ kvota.kvota1x }}</td>
+                <td class = "kvote">{{ kvota.kvota12 }}</td>
+                <td class = "kvote">{{ kvota.kvotax1 }}</td>
+                <td class = "kvote">{{ kvota.kvotaxx }}</td>
+                <td class = "kvote">{{ kvota.kvotax2 }}</td>
+                <td class = "kvote">{{ kvota.kvota21 }}</td>
+                <td class = "kvote">{{ kvota.kvota2x }}</td>
+                <td class = "kvote">{{ kvota.kvota22 }}</td>
+                <td class = "kvote">{{ kvota.prvigol1 }}</td>
+                <td class = "kvote">{{ kvota.prvigol2 }}</td>
+                <td class = "kvote">{{ kvota.prvigol3 }}</td>
+                <td class = "idkvote" style="display: none">{{ kvota.idkvo }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+  </div>
+</div>
+
+<h2>Ukupna kvota</h2>
+<h3 id="kv">1</h3>
+
+
+
+<form action="../{{ kvoterId }}/{{ igracId }}" method="post" style="text-align: center">
+  {% csrf_token %}
+    {% for kvota in kvote %}
+        <input type="hidden" value="nula" name="test{{kvota.idkvo}}" id="test{{kvota.idkvo}}">
+        <input type="hidden" value=0 name="odigrano{{kvota.idkvo}}" id="odigrano{{kvota.idkvo}}">
+    {% endfor %}
+
+  <label for="fname" style="color: #59FF37">Uplata (min 20):</label><br>
+  <input type="text" id="fname" name="fname" value="100"><br>
+  <input  type="submit"  value="Pošalji tiket">
+
+</form>
+
+<div class="bottom">
+<table>
+    <tr>
+        <td colspan="2"><b><i>Time to win!</i></b></td>
+    </tr>
+</table>
+</div>
+
+<script>
+
+window.onload = function(){
+    var poruka = "{{ poruka }}";
+    if(poruka != 0) alert(poruka);
+
+    var all = document.getElementsByClassName("kvote");
+    for (var i=0;i<all.length;i++) {
+        all[i].onclick = inputClickHandler;
+    }
+};
+
+function inputClickHandler(e){
+    e = e||window.event;
+    var tdElm = e.target||e.srcElement;
+    var kvota = parseFloat(tdElm.innerText);
+    var ukupna = parseFloat(document.getElementById("kv").innerText);
+    var rowId = tdElm.parentNode.rowIndex;
+    var all = document.getElementsByClassName("kvote");
+    var id_kvota_svih = document.getElementsByClassName("idkvote");
+    var idkvote = 0;
+    var input_id;
+    var odigrano_id;
+    var odigrano = $(tdElm).closest('table').find('th').eq($(tdElm).index()).html();
+
+
+    if(tdElm.style.backgroundColor == 'yellow'){ // uklanjanje kvote
+        tdElm.style.backgroundColor = '#fff';
+        ukupna = ukupna / kvota;
+        document.getElementById("kv").innerText = ukupna;
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                input_id = "test" + idkvote;
+                odigrano_id = "odigrano" + idkvote;
+                document.getElementById(input_id).value = 0;
+                document.getElementById(odigrano_id).value = 0;
+                break;
+            }
+        }
+    } else { // dodavanje kvote
+        // obrisi prethodno odigranu kvotu za taj mec
+        for (var i=0;i<all.length;i++) {
+            if(all[i].parentNode.rowIndex == rowId && all[i].style.backgroundColor == 'yellow'){
+                 all[i].style.backgroundColor = '#fff';
+                 var kvotaObrisi = parseFloat(all[i].innerText);
+                 ukupna = ukupna / kvotaObrisi;
+                 break;
+            }
+        }
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                input_id = "test" + idkvote;
+                odigrano_id = "odigrano" + idkvote;
+                document.getElementById(input_id).value = kvota;
+                document.getElementById(odigrano_id).value = odigrano;
+                break;
+            }
+        }
+
+        // ubaci nov izbor
+        tdElm.style.backgroundColor = 'yellow';
+        ukupna = ukupna * kvota;
+        document.getElementById("kv").innerText = ukupna;
+    }
+}
+
+
+document.getElementById("tiket").addEventListener("click", myFunction);
+
+function myFunction() {
+
+var uplata = parseInt(document.getElementById('fname').value, 10);
+var kvota = parseFloat(document.getElementById("kv").innerText);
+if(uplata < 20){
+   alert("Nemoguc iznos za uplatu. Molimo Vas da pokusate ponovo.");
+}
+else if(kvota == 1){
+   alert("Niste napravili tiket. Molimo Vas da pokusate ponovo.");
+}
+else{
+  alert("Uspesno ste uplatili tiket.");
+  window.location = 'psi.html';
+}
+
+}
+
+</script>
+
+</body>
+</html>

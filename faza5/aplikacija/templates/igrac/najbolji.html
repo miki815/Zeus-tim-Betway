@@ -1,0 +1,155 @@
+<!-- Mihailo Milenkovic mm190117 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    .row {
+      margin-left:-5px;
+      margin-right:-5px;
+    }
+  
+    .column {
+      float: left;
+      width: 50%;
+      padding: 5px;
+      background-color: white;
+    }
+
+    .bottom{
+       position: absolute;
+       bottom:0px;
+       width: 100%;
+       height: 100px;
+       background-color: #FF8040;
+       text-align: center;
+       font-size: 40px
+    }
+
+    .row::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+      border: 1px solid #ddd;
+    }
+  
+    th, td {
+      text-align: left;
+      padding: 16px;
+    }
+    </style>
+</head>
+<body style="background-color:#154360">
+
+
+<table width="100%" cellspacing="0">
+    <tr height="50px"bgcolor="#FF8040">
+        <td width="50%" align="center">
+            <font size="8"><b>Najbolji igrači i kvoteri</b></font>
+       </td>
+       <td width="50%" align="center">
+            
+            <form action="">
+                            
+
+                <a href="../{{ userId }}">
+                    <input type="button" value="Moj profil" class="button1">
+               </a>
+              
+            
+            </form>
+       </td>
+    </tr>
+</table>
+
+
+<div class="row">
+  <div class="column">
+    <table style="border: 1px solid black;  border-collapse: collapse; margin-left: 5px; text-align: center" align="center">
+      <tr >
+
+        <th width="50%" style="text-align: center">Igrač <hr></th>
+        <th width="50%" style="text-align: center">Profit <hr></th>
+      </tr>
+      {% for statatistika in statistike%}
+          {% for igrac in igraci %}
+              {% if   igrac.idkor == statatistika.idkor.idkor %}
+                  <tr>
+                    <td width="50%" style="text-align: center">{{  igrac.korisnickoime }}<hr></td>
+                    <td width="50%" style="text-align: center">{{  statatistika.ukupnodobijeno }}<hr></td>
+                </tr>
+              {% endif %}
+
+        {% endfor %}
+      {% endfor %}
+
+      </tr>
+    </table>
+  </div>
+
+
+
+
+
+
+  <div class="column">
+    <table style="border: 1px solid black;  border-collapse: collapse; text-align: center; padding-bottom: 100px;" align="center">
+      <tr>
+
+        <th width="33 %" style="text-align: center">Kvoter<hr></th>
+        <th width="33%" style="text-align: center">Primljenih pogođenih tiketa<hr></th>
+           <th width="33%" style="text-align: center">Primljenih promašenih tiketa<hr></th>
+      </tr>
+      </tr>
+      {% for   brojprimljenih1 in brojprimljenih %}
+          {% for igrac in igraci %}
+              {% if   igrac.idkor == brojprimljenih1.idkor.idkor %}
+                  <tr>
+                    <td width="33%" style="text-align: center">{{  igrac.korisnickoime }}<hr></td>
+                    <td width="33%" style="text-align: center">{{  brojprimljenih1.brojprimljenihpogodjenih }}<hr></td>
+                    <td width="33%" style="text-align: center">{{  brojprimljenih1.brojprimljenihpromasenih }}<hr></td>
+                </tr>
+              {% endif %}
+
+        {% endfor %}
+      {% endfor %}
+
+      </tr>
+    </table>
+  </div>
+</div>
+
+<div class="bottom">
+<table>
+    <tr align = "center" style="padding-top: 10px; text-align: center">
+        <td colspan="2" style="text-align: center">
+                <b><i>Time to win!</i></b>
+        </td>
+    </tr>
+</table>
+</div>
+
+
+
+</body>
+</html>
+

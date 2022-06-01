@@ -1,0 +1,224 @@
+<!--Mihailo Milenkovic mm190117-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+
+    <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    .row {
+      margin-left:-5px;
+      margin-right:-5px;
+    }
+
+    .column {
+      float: left;
+      width: 100%;
+      padding: 5px;
+      background-color: white;
+    }
+
+    .bottom{
+       bottom:0px;
+       width: 100%;
+       height: 100px;
+       background-color: #FF8040;
+       text-align: center;
+       font-size: 40px;
+        margin-bottom: 0px;
+    }
+
+    .row::after {
+      content: "";
+      clear: both;
+      display: table;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      width: 100%;
+
+    }
+
+    th, td {
+      text-align: left;
+      padding: 16px;
+    }
+
+    h2, h3 {
+      color: #59FF37;
+      text-align: center;
+     }
+    </style>
+</head>
+<body  style="background-color:#154360">
+
+<table width="100%" cellspacing="0">
+    <tr height="50px"bgcolor="#FF8040">
+        <td width="50%" align="center">
+            <font size="8"><b>Vip kladjenje</b></font>
+       </td>
+       <td width="50%" align="center">
+                <a href="../../{{ igracId }}">
+                    <input type="button" value="Moj profil" class="button1">
+               </a>
+       </td>
+    </tr>
+</table>
+
+<div class="row">
+  <div class="column">
+    <table>
+      <tr>
+
+        <th>Igrac</th>
+        <th>Tiket</th>
+        <th>Prolaz</th>
+        <th>Pad</th>
+        <th style="display: none">idkvo</th>
+      </tr>
+
+        {% for kvota, igrac, utakmice in kvote_igraci_tiketi %}
+      <tr>
+
+        <td>{{ igrac.idkor}}</td>
+      <td>
+          {% for utakmica in utakmice %}
+              {% for podatak in utakmica %}
+                 {{ podatak }}
+              {% endfor %}
+              <br>
+          {% endfor %}
+      </td>
+        <td class = "kvote">{{ kvota.kvotaprolaz }}</td>
+        <td class = "kvote">{{ kvota.kvotapad }}</td>
+        <td class = "idkvote" style="display: none">{{ kvota.idkvo }}</td>
+      </tr>
+        {% endfor %}
+    </table>
+  </div>
+</div>
+
+<h2>Ukupna kvota</h2>
+<h3 id="kv">1</h3>
+
+<form action="../{{ kvoterId }}/{{ igracId }}" method="post" style="text-align: center">
+  {% csrf_token %}
+        <input type="hidden" value=0 name="kvota" id="kvota">
+        <input type="hidden" value=0 name="odigrano" id="odigrano">
+        <input type="hidden" value=0 name="idKvote" id="idKvote">
+
+  <label for="fname" style="color: #59FF37">Uplata (min 20):</label><br>
+  <input type="text" id="fname" name="fname" value="100"><br>
+  <input  type="submit"  value="Uplati tiket">
+</form>
+
+<div class="bottom">
+<table>
+    <tr>
+        <td colspan="2" style="text-align: center"><b><i>Time to win!</i></b></td>
+    </tr>
+</table>
+</div>
+
+<script>
+
+window.onload = function(){
+
+    var poruka = "{{ poruka }}";
+    if(poruka != 0) alert(poruka);
+
+    var all = document.getElementsByClassName("kvote");
+    for (var i=0;i<all.length;i++) {
+        all[i].onclick = inputClickHandler;
+    }
+};
+
+function inputClickHandler(e){
+    e = e||window.event;
+    var tdElm = e.target||e.srcElement;
+    var kvota = parseFloat(tdElm.innerText);
+    var ukupna = parseFloat(document.getElementById("kv").innerText);
+    var rowId = tdElm.parentNode.rowIndex;
+    var all = document.getElementsByClassName("kvote");
+    var id_kvota_svih = document.getElementsByClassName("idkvote");
+    var idkvote = 0;
+    var odigrano = $(tdElm).closest('table').find('th').eq($(tdElm).index()).html();
+
+
+    if(tdElm.style.backgroundColor == 'yellow'){ // uklanjanje kvote
+        tdElm.style.backgroundColor = '#fff';
+        ukupna = ukupna / kvota;
+        document.getElementById("kv").innerText = ukupna;
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                document.getElementById("kvota").value = 0;
+                document.getElementById("odigrano").value = 0;
+                document.getElementById("idKvote").value = 0;
+                break;
+            }
+        }
+    } else { // dodavanje kvote
+        // obrisi prethodno odigranu kvotu
+        for (var i=0;i<all.length;i++) {
+            if(all[i].style.backgroundColor == 'yellow'){
+                 all[i].style.backgroundColor = '#fff';
+                 var kvotaObrisi = parseFloat(all[i].innerText);
+                 ukupna = ukupna / kvotaObrisi;
+                 break;
+            }
+        }
+        for (var i=0;i<id_kvota_svih.length;i++) {  // azuriranje forme za slanje
+            if(id_kvota_svih[i].parentNode.rowIndex == rowId){
+                idkvote = id_kvota_svih[i].innerText;
+                document.getElementById("kvota").value = kvota;
+                document.getElementById("odigrano").value = odigrano;
+                document.getElementById("idKvote").value = idkvote;
+                break;
+            }
+        }
+
+        // ubaci nov izbor
+        tdElm.style.backgroundColor = 'yellow';
+        ukupna = ukupna * kvota;
+        document.getElementById("kv").innerText = ukupna;
+    }
+}
+
+
+/*function inputClickHandler(e){
+    e = e||window.event;
+    var tdElm = e.target||e.srcElement;
+    if(tdElm.style.backgroundColor == 'yellow'){
+        tdElm.style.backgroundColor = '#fff';
+        var kvota = parseFloat(tdElm.innerText);
+        var ukupna = parseFloat(document.getElementById("kv").innerText);
+        ukupna = ukupna / kvota;
+        document.getElementById("kv").innerText = ukupna;
+    } else {
+        tdElm.style.backgroundColor = 'yellow';
+        var kvota = parseFloat(tdElm.innerText);
+        var ukupna = parseFloat(document.getElementById("kv").innerText);
+        ukupna = ukupna * kvota;
+        document.getElementById("kv").innerText = ukupna;
+    }
+}*/
+
+</script>
+
+</body>
+</html>

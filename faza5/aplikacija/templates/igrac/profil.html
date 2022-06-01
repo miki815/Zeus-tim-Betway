@@ -1,0 +1,218 @@
+<!--Nemanja Krivokapic-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil igraca</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.9.2/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+
+<table width="100%" cellspacing="10" cellpadding="10">
+    <tr height="50px"bgcolor="#FF8040">
+        <td width="33%" align="center">
+           <B> Stanje racuna: {{ stanje }} RSD</B><hr>
+           <b>Status: {{ status }}</b>
+
+        </td>
+       <td width="33%" align="center" >
+
+           <font size="8"><b>{{ korisnickoIme }}</b></font>
+       </td>
+       <td width="33%" align="right">
+
+            <table>
+                <tr>
+                    <td>
+                           <a href="">
+                          <input type="button" value="Igrac" class="button1">
+ 	       </a>
+                        <a href="../kvoter/{{ userId }}/napravikvote">
+                            <input type="button" value="Kvoter" class="button1" >
+                        </a>
+                    </td>
+                    <td>
+
+                        <form action="logoutr">
+
+                            <input type="submit" value="Logout" class="button1">
+
+                        </form>
+                    </td>
+                </tr>
+
+
+            </table>
+
+
+       </td>
+    </tr>
+
+
+
+    <tr height="600px" bgcolor="#154360" >
+        </td>
+        <td colspan="3">
+
+            <table align="center" cellpadding="15px" class="text"  style="border-collapse: collapse;">
+                <tr>
+                    <td colspan="2" align="center" class="linkovi">
+                        {% csrf_token %}
+                        <b><h3>{{ poruka }}</h3></b>
+                    </td>
+                </tr>
+                <tr width="100%" class="text">
+                    <td colspan="2" align="center">
+                        <div><b>Uspesnost</b></div>
+                        <div class="progress">
+                            <div class="progress-bar bg-success progress-bar-striped progress-bar-striped progress-bar-animated"
+                            style="width: {{ wPog }}%;">{{ brojPogodaka }}</div>
+                            <div class="progress-bar bg-danger progress-bar-striped progress-bar-animated"
+                            style="width: {{wProm}}%;">{{ brojPromasaja }}</div>
+                        </div>
+                    </td>
+                </tr>
+  <form action="{{ userId }}" method="post">
+      <tr>
+
+                        <td>
+
+                                {% csrf_token %}
+                                {{ form }}
+
+
+                        </td>
+                        <td align="center" colspan="2">
+
+                                <input type="submit" value="Isplati" background-color="#4CAF50">
+
+                        </td>
+                    </tr>
+                </form>
+                <form action="{{ userId }}" method="post">
+
+                    <tr>
+                     <td>
+
+                                {% csrf_token %}
+                                {{ form1 }}
+
+
+                        </td>
+                        <td align="center" colspan="2">
+
+                                <input type="submit" value="Uplati" background-color="#4CAF50">
+
+                        </td>
+                </tr>
+                </form>
+
+                    <tr>
+                        <td><b>Promena lozinke:</b></td>
+                        <td >
+                            <div class="linkovi">
+                                <a href="{{ userId }}/promenalozinke" class="linkovi">Kliknuti ovde za promenu lozinke</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><b>Brisanje naloga:</b></td>
+                        <td >
+                            <div class="linkovi">
+                                <a href="{{ userId }}/brisanjenaloga" >Kliknuti ovde za brisanje naloga</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td  colspan="2" >
+                            <div class="linkovi">
+                                <a href="statistika/{{ userId }}" class="linkovi" align='center'> Pregled statistike</a>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="{{ userId }}/istorija" class="linkovi" align='center'> Istorija odigranih utakmica</a>
+                            </div>
+                        </td>
+                    </tr>
+	 <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="{{ userId }}/najbolji" class="linkovi" align='center'>Najbolji</a>
+                            </div>
+                        </td>
+                    </tr>
+	  <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="{{ userId }}/postanivip" class="linkovi" align='center'>Postani VIP</a>
+                            </div>
+                        </td>
+                    </tr>
+                      <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="prikazkvotera/{{ userId }}" class="linkovi" align='center'>Kladjenje</a>
+                            </div>
+                        </td>
+                    </tr>
+                     <tr>
+                        <td colspan="2" >
+                            <div class="linkovi">
+                                <a href="desetunizu/{{ userId }}" class="linkovi" align='center'>10 u nizu</a>
+                            </div>
+                        </td>
+                    </tr>
+ 	                <tr>
+                        <td colspan="2">
+                            <div class="linkovi" >
+                                <a href="prikazvipkvotera/{{ userId }}" class="linkovi" align='center'>VIP opklada</a>
+                            </div>
+                        </td>
+                    </tr>
+
+            </table>
+
+
+        </td>
+    </tr>
+    <tr height="50px" bgcolor="#FF8040">
+        <td colspan="3" align="center">
+            <font size="7">
+                <b><i>Time to win!</i></b>
+            </font>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
+
+
+<style>
+    .linkovi{
+        background-color: #FF8040;
+        border-radius: 10px;
+        text-align: center;
+        height: 80%;
+
+    }
+    a{
+        font-weight: bold;
+        color: black;
+    }
+    tr{
+         padding: 10px;
+    }
+    td{
+          font-weight: bold;
+    }
+</style>
