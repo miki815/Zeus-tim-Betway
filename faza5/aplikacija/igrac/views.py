@@ -174,15 +174,23 @@ def profil(request, userId):
         form = IsplataForm(request.POST)
         if (form.is_valid()):
             iznos = form.cleaned_data['iznos']
-            if(stanje>=iznos):
+            if(stanje>=iznos and iznos>0):
                 stanje=stanje-iznos
                 igrac.stanje = stanje
                 igrac.save()
-
+    if (request.method == 'POST'):
+        form = UplataForm(request.POST)
+        if (form.is_valid()):
+            iznos = form.cleaned_data['uplata']
+            if( iznos>0):
+                stanje=stanje+iznos
+                igrac.stanje = stanje
+                igrac.save()
     form = IsplataForm()
+    form1=UplataForm()
     context = {'stanje': stanje, 'form': form, 'status': status, 'userId': userId, 'brojPogodaka': brojPogodaka,
                'brojPromasaja': brojPromasaja, 'korisnickoIme': korisnickoIme, 'wProm': widthPromasaja,
-               'wPog': widthPogodaka}
+               'wPog': widthPogodaka, 'form1': form1}
     return render(request, 'igrac/profil.html', context)
 
 def deset_u_nizu(request, userId):
@@ -223,6 +231,7 @@ def promenalozinke(request, userId):
             lozinka0 = form.cleaned_data['lozinka0']
             lozinka1=form.cleaned_data['lozinka1']
             lozinka2 = form.cleaned_data['lozinka2']
+            lozinka0=make_password(lozinka0)
             if(lozinka0!=korisnik.lozinka):
                 poruka = "Netacna lozinka!"
                 context = {'form': form, 'poruka': poruka}
@@ -234,7 +243,7 @@ def promenalozinke(request, userId):
                 return render(request, 'igrac/promenalozinke.html', context)
             else:
                 poruka = "Uspesno ste promenili lozinku!"
-                korisnik.lozinka = lozinka1
+                korisnik.lozinka =make_password( lozinka1)
                 korisnik.save()
                 context = {'form': form, 'poruka': poruka}
                 return render(request, 'igrac/promenalozinke.html', context)
@@ -329,7 +338,7 @@ def prikaz_kvotera(request, userId):
 def prikaz_kvota(request, kvoterId, igracId):
     kvote = Postavljenekvote.objects.filter(idkor = kvoterId)
     utakmice = []
-    poruka = 0;
+    poruka = 0
     for kvota in kvote:
          utakmice.append(kvota.iduta)
     kvote_utakmice = zip(kvote, utakmice)
@@ -339,7 +348,7 @@ def prikaz_kvota(request, kvoterId, igracId):
         kvoter = list(Kvoter.objects.filter(idkor=kvoterId))
         korisnik = list(Korisnik.objects.filter(idkor=igracId))
         korisnikKvoter = list(Korisnik.objects.filter(idkor=kvoterId))
-        ukupna_kvota = 1;
+        ukupna_kvota = 1
         uplata = request.POST.get("fname")
         if korisnik[0].stanje < int(uplata):
             poruka = "Nemate dovoljno novca da uplatite tiket!"
@@ -353,9 +362,22 @@ def prikaz_kvota(request, kvoterId, igracId):
             data_id = "test" + kvota.idkvo
             odigrano_id = "odigrano" + kvota.idkvo
             data = request.POST.get(data_id)
+            if(data=='0'):
+                data='nula'
             odigrano = request.POST.get(odigrano_id)
-            if data != "nula":
-                ukupna_kvota *= float(data);
+            if data != "nula" :
+                #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                ut=Utakmica.objects.get(pk=kvota.iduta.iduta)
+                istorija=Istorijautakmica()
+                istorija.odigrano=ut.tim1+" : "+ut.tim2+" "+odigrano
+                istorija.ishod=-1
+                istorija.idkor=korisnik[0]
+                istorija.save()
+                #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+                ukupna_kvota *= float(data)
                 par_na_tiketu = Tiketdogadjaj()
                 par_na_tiketu.odigrano = odigrano
                 par_na_tiketu.iduta = kvota.iduta
@@ -366,9 +388,11 @@ def prikaz_kvota(request, kvoterId, igracId):
         if(ukupna_kvota == 1):
             tiket.delete();
             poruka = "Niste izabrali tipove!"
+            tiket.delete()
             return render(request, 'igrac/kvote.html', {'poruka': poruka, 'kvote_utakmice': kvote_utakmice,
                                                         'kvoterId': kvoterId, 'kvote': kvote,'igracId': igracId})
         if ukupna_kvota * int(uplata) + int(uplata) >  korisnikKvoter[0].stanje:
+            tiket.delete()
             poruka = "Kvoter nema novca da vam isplati dobitak! Max uplata za ovaj tiket: " + str(float(korisnikKvoter[0].stanje) / ukupna_kvota)
             context = {'kvote_utakmice': kvote_utakmice, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId,
                    'poruka': poruka}
@@ -506,6 +530,8 @@ def istorija(request, userId):
 
     context={'utakmice': utakmice, 'userId': userId}
     return  render(request, 'igrac/istorijaodigranih.html', context)
+
+
 
 
 

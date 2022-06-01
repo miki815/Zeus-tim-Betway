@@ -133,12 +133,15 @@ def ugasiutakmicu(request):
                 t=tiketd.idtik
                 t=Korisnik.objects.get(pk=t.idkor.idkor.idkor)
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+                s=tim1+" : "+tim2+" "+tiketd.odigrano
+                ist=Istorijautakmica.objects.filter(odigrano=s)
+                ist.delete()
                 kraj = "Datum: " + datum + "    |   " + tim1 + " : " + tim2 + "    |   Ishod: " + ishod1
                 istorija = Istorijautakmica()
                 istorija.ishod = tiketd.ishod
                 istorija.idkor = t
                 istorija.odigrano =  kraj
+
                 istorija.save()
 
                 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -153,6 +156,20 @@ def ugasiutakmicu(request):
                     if(t.ishod==-1):
                         dobijeno=-1
                 if(dobijeno==1):
+
+                    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    viptiket=Viptiket.objects.get(idtik=tiket)
+                    if(viptiket.odigrano=='Prolaz'):
+                        k=Korisnik.objects.get(pk=viptiket.idkvo.pk)
+                        i=Korisnik.objects.get(pk=viptiket.idkor.pk)
+                        i.stanje+=viptiket.dobitak
+                        k.stanje-=viptiket.dobitak
+                        i.save()
+                        k.save()
+                    viptiket.delete()
+                    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
                     for t in tiketdog:
                         t.delete()
                     s=tiket.idkor.pk
@@ -175,6 +192,19 @@ def ugasiutakmicu(request):
                     statistika=Statistika.objects.get(idkor=tiket.idkor.pk)
                     statistika.save()
                 if(dobijeno==0):
+
+                    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+                    viptiket = Viptiket.objects.get(idtik=tiket)
+                    if (viptiket.odigrano == 'Pad'):
+                        k = Korisnik.objects.get(pk=viptiket.idkvo.pk)
+                        i = Korisnik.objects.get(pk=viptiket.idkor.pk)
+                        i.stanje += viptiket.dobitak
+                        k.stanje -= viptiket.dobitak
+                        i.save()
+                        k.save()
+                    viptiket.delete()
+                    # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
                     for t in tiketdog:
                         t.delete()
                     tiket.delete()
