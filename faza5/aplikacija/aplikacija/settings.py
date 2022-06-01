@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'aplikacija.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'betway',
+        'NAME': 'betway815',
         'USER': 'root',
         'PASSWORD': '1billion1',
         'HOST': '127.0.0.1',
@@ -129,5 +129,6 @@ STATIC_URL = 'static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
+AUTH_USER_MODEL = 'igrac.Korisnik'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

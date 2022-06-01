@@ -1,12 +1,158 @@
 from django.http import HttpResponse, HttpResponseRedirect, Http404
-from django.shortcuts import render
+from django.contrib.auth.hashers import make_password
+from django.shortcuts import render, redirect
 from .forms import *
 from .models import *
 from datetime import date
+from django.contrib.auth import login, authenticate
+
+
+
 
 
 def index(request):
-    return HttpResponse("Igrac ovde")
+    greska = ""
+    if request.method == "POST":
+        username = request.POST.get('korime')
+        name = request.POST.get('ime')
+        surname = request.POST.get('prezime')
+        password = request.POST.get('loz')
+        jmbg = request.POST.get('jmbg')
+        email = request.POST.get('email')
+        if len(name) == 0:
+            greska = "Unesite ime!"
+        elif len(surname) == 0:
+            greska = "Unesite prezime!"
+        elif len(username) == 0:
+            greska = "Unesite korisničko ime!"
+        elif len(password) == 0:
+            greska = "Unesite sifru!"
+        elif len(email)==0:
+            greska="Unesite email!"
+        elif len(jmbg)==0:
+            greska="Unesite jmbg!"
+        elif len(Korisnik.objects.filter(username=username)) != 0:
+            greska = "Korisničko ime već postoji!"
+        elif len(Korisnik.objects.filter(email=email))!=0:
+            greska = "Email već postoji!"
+        elif len(Korisnik.objects.filter(jmbg=jmbg))!=0:
+            greska = "JMBG već postoji!"
+        elif len(password)<8:
+            greska="Lozinka mora imati minimalno 8 karaktera!"
+        else:
+            ispravno=0
+            karakter=0
+            slovo=0
+            for k in password:
+                if(k.isupper()):
+                    slovo=1
+            for i in password:
+                if (i=="1" or i=="2" or i==3 or i==4 or i==5 or i==6 or i==7 or i==8 or i==9 or i==0):
+                    ispravno=1
+                    break
+            for j in password:
+                if(j=="!" or j=="?" or j=="." or j=="," or j=="#" or j=="&" or j=="/"  or j=="<" or j==">" or j=="-" or j=="_" or j=="=" or j=="%"):
+                    karakter=1
+            datum=0
+            mesec=jmbg[2:4]
+            dan=int(jmbg[0:2])
+            prvacifgod=int(jmbg[4:6])
+            pres=0
+            godina=0
+            if(prvacifgod=="00"):
+                god = int(jmbg[7])
+                if god<5:
+                    godina="2"+jmbg[4:7]
+                p=int(godina)
+                if(p%4==0):pres=1
+            else:
+                godina="1"+jmbg[4:7]
+                p = int(godina)
+                if (p % 4 == 0): pres = 1
+            if((mesec=="01" or mesec=="03" or mesec=="05" or mesec=="07" or mesec=="08" or mesec=="10"  or mesec=="12")and godina!=0):
+                if (dan<=31 and dan>=1): datum=1
+            elif((mesec=="04" or mesec=="06" or mesec=="09" or mesec=="11") and godina!=0):
+                if(dan<=30 and dan>=1):datum=1
+            elif(mesec=="02"):
+                if(p==1):
+                    if(dan<=29 and dan>=1):datum=1
+                else:
+                    if (dan <= 28 and dan >= 1): datum = 1
+            if ispravno==0:
+                greska="Lozinka mora da sadrži bar jednu cifru! "
+            if karakter==0:
+                greska+="Lozinka mora da sadrži bar jedan od karaktera !?.,#&/<>-_=% "
+            if slovo==0:
+                greska+="Lozinka mora da sadrži bar jedno veliko slovo! "
+            if len(jmbg)!=13:
+                greska+="JMBG mora imati 13 karaktera "
+            if datum==0:
+                greska+="JMBG nije validan! "
+            if(greska==""):
+                user = Korisnik()
+                user.username = username
+                user.password = make_password(password)
+                user.first_name = name
+                user.last_name = surname
+                user.jmbg=jmbg
+                user.email=email
+                user.korisnickoime = username
+                user.ime = name
+                user.prezime = surname
+                user.lozinka = password
+                user.stanje = 0
+                user.vip = 0
+                user.kartica = 0
+                user.save()
+                statistika = Statistika()
+                statistika.idkor = user
+                statistika.save()
+                dnz = Desetunizu(user.idkor)
+                igrac = Igrac(user.idkor)
+                kvoter = Kvoter(user.idkor)
+                dnz.save()
+                igrac.save()
+                kvoter.save()
+                #group = Group.objects.get(name='default')
+                #user.groups.add(group)
+                login(request, user)
+                return redirect('logovanje')
+    context = {
+        'greska': greska
+    }
+    return render(request, 'registracija/rregistracija.html', context)
+
+def izborStatusaStranica(request, userId):
+    context={'userId': userId}
+    return render(request, 'registracija/izborStatusa.html', context)
+
+def logovanje(request):
+    greska = ""
+    if request.method == "POST":
+        username = request.POST.get('korisnickoime')
+        password = request.POST.get('lozinka')
+        print(username)
+        if username=="" and password=="" :
+            greska="Unesite korisničko ime i lozinku!"
+        elif username=="":
+            greska="Unesite korisničko ime!"
+        elif password=="":
+            greska="Unesite lozinku!"
+        elif len(Korisnik.objects.filter(username=username)) == 0:
+            greska = "Korisnik ne postoji!"
+        elif password!=""and username!="":
+            user = authenticate(username=username, password=password)
+            if user:
+                login(request, user)
+                context = {'userId': user.idkor}
+                return render(request, 'registracija/izborStatusa.html', context)
+             #   return redirect('izborStatusa')
+            else:
+                greska = "Lozinka nije ispravna!"
+    context = {
+        "greska": greska
+    }
+    return render(request, 'registracija/logovanje.html', context)
 
 def profil(request, userId):
     igrac = Korisnik.objects.filter(idkor = userId)
@@ -19,8 +165,8 @@ def profil(request, userId):
     statistika = statistika[0]
     brojPogodaka = statistika.brojpogodjenih
     brojPromasaja = statistika.brojpromasenih
-    widthPogodaka = (brojPogodaka / (brojPogodaka + brojPromasaja)) * 100
-    widthPromasaja = (brojPromasaja / (brojPogodaka + brojPromasaja)) * 100
+    widthPogodaka = (brojPogodaka / (brojPogodaka + brojPromasaja)) * 100 if brojPogodaka + brojPromasaja > 0 else 0
+    widthPromasaja = (brojPromasaja / (brojPogodaka + brojPromasaja)) * 100 if brojPogodaka + brojPromasaja > 0 else 0
     korisnickoIme = igrac.korisnickoime
     iznos=0
 
@@ -62,8 +208,8 @@ def deset_u_nizu(request, userId):
         form = DesetForm()
     indeks = Utakmica10.objects.count()
     utakmica = Utakmica10.objects.all()
-    utakmica = utakmica[indeks - 1]
-    utakmica = utakmica.utakmica10
+    utakmica = utakmica[indeks - 1] if indeks > 0 else 0
+    utakmica = utakmica.utakmica10 if utakmica else "Utakmica nije postavljena"
     context = {'form': form, 'userId': userId,  'utakmica': utakmica, 'brojPogodaka': brojPogodaka}
     return render(request, 'igrac/desetunizu.html', context)
 
@@ -254,8 +400,8 @@ def statistika(request, userId):
         raise Http404("Ne postoji igrac sa unetim ID")
     stat_list = list(stat)
     podaci = stat_list[0]
-    procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
-    procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)
+    procenat_win = round((podaci.brojpogodjenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2) if podaci.brojpogodjenih + podaci.brojpromasenih > 0 else 0
+    procenat_lose = round((podaci.brojpromasenih / (podaci.brojpogodjenih + podaci.brojpromasenih)) * 100, 2)  if podaci.brojpogodjenih + podaci.brojpromasenih > 0 else 0
     context = {'userId': userId, 'podaci': podaci, 'procenat_win': procenat_win, 'procenat_lose': procenat_lose}
     return render(request, 'igrac/statistika.html', context)
 
