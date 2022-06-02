@@ -20,7 +20,8 @@ urlpatterns = [
     path('prikazvipkvotera/<int:userId>', prikaz_vip_kvotera, name='vipkvoteri'),
     path('vip_kladionica/<int:kvoterId>/<int:igracId>', prikaz_vip_kvota, name='vipkvote'),
     path('<int:userId>/istorija', istorija, name='istorija'),
-    path('izborStatusa/<int:userId>', izborStatusaStranica, name='izborStatusa')
+    path('izborStatusa/<int:userId>', izborStatusaStranica, name='izborStatusa'),
+    path('logoutr', logoutr, name='logoutr')
 ]
 
 """urlpatterns = [
