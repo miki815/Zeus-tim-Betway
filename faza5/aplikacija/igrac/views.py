@@ -7,6 +7,12 @@ from datetime import date
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.decorators import login_required
 
+
+"""Anja Kovačević 0484/19
+Funkcija koja služi kao početna (registracija)
+Korisnik može da se registruje ako popuni sva polja, ako su uneti podaci ispravni
+i ukoliko već neko sa datim atributima ne postoji u bazi
+"""
 def index(request):
     greska = ""
     if request.method == "POST":
@@ -85,6 +91,9 @@ def index(request):
                 greska+="JMBG mora imati 13 karaktera "
             if datum==0:
                 greska+="JMBG nije validan! "
+            """
+            Pravljenje novog korisnika
+            """
             if(greska==""):
                 user = Korisnik()
                 user.username = username
@@ -119,7 +128,10 @@ def index(request):
     }
     return render(request, 'registracija/rregistracija.html', context)
 
-
+"""Anja Kovačević 0484/19
+Logovanje se vrši pomoću korisničkog imena i lozinka,
+ukoliko korisnik nije uneo tačne podatke (ili nije popuni sva polja) prikazuje mu se greška
+"""
 def logovanje(request):
     greska = ""
     if request.method == "POST":
@@ -148,10 +160,14 @@ def logovanje(request):
     }
     return render(request, 'registracija/logovanje.html', context)
 
+
 def registracija(request):
     context = {}
     return render(request, 'igrac/rregistracija.html', context)
 
+"""Anja Kovačević 0484/19
+Korisnik bira status (da li želi biti igrač ili kvoter) prilikom  loginovanja
+"""
 @login_required(login_url='index')
 def izborStatusaStranica(request, userId):
     if (request.user.pk == userId):
@@ -160,6 +176,11 @@ def izborStatusaStranica(request, userId):
     context={}
     return render(request,'registracija/greska.html', context )
 
+"""Nemanja Krivokapić 0588/19
+Prikaz profila korisnika sa svim mogućnostima koje on može da korisni,
+takođe postoje i dve forme za isplatu i uplatu novca koje vrše transakcije sa
+korisnikove kartice ili na nju
+"""
 @login_required(login_url='index')
 def profil(request, userId):
     if(request.user.pk!=userId):
@@ -180,7 +201,7 @@ def profil(request, userId):
         widthPromasaja = (brojPromasaja / (brojPogodaka + brojPromasaja)) * 100 if brojPogodaka + brojPromasaja > 0 else 0
         korisnickoIme = igrac.korisnickoime
         iznos=0
-
+        """Isplata"""
         if (request.method == 'POST'):
             form = IsplataForm(request.POST)
             if (form.is_valid()):
@@ -189,6 +210,7 @@ def profil(request, userId):
                     stanje=stanje-iznos
                     igrac.stanje = stanje
                     igrac.save()
+        """Uplata"""
         if (request.method == 'POST'):
             form = UplataForm(request.POST)
             if (form.is_valid()):
@@ -206,6 +228,12 @@ def profil(request, userId):
     context={}
     return  render(request, 'registracija/greska.html', context)
 
+
+
+
+"""Mihailo Milenković 0117/19
+Korisnik bira jednu od ponuđene 3  opcije za opklad 10 u nizu
+"""
 @login_required(login_url='index')
 def deset_u_nizu(request, userId):
     if (request.user.pk == userId):
@@ -238,10 +266,11 @@ def deset_u_nizu(request, userId):
     context={}
     return render(request, 'registracija/greska.html', context)
 
+"""Nemanja Krivokapić 0588/19
+Korisnik može na profilu da zatraži menjanje lozinke
+Ukoliko unese sve podatke i oni budu ispravi korisnik je promenio lozinku
 
-
-
-
+"""
 @login_required(login_url='index')
 def promenalozinke(request, userId):
     context={}
@@ -254,12 +283,13 @@ def promenalozinke(request, userId):
                 lozinka0 = form.cleaned_data['lozinka0']
                 lozinka1=form.cleaned_data['lozinka1']
                 lozinka2 = form.cleaned_data['lozinka2']
-
+                """Korisnik nije uneo tačnu lozinku."""
                 if(lozinka0!=korisnik.lozinka):
                     poruka = "Netacna lozinka!"
                     context = {'form': form, 'poruka': poruka}
 
                     return render(request, 'igrac/promenalozinke.html', context)
+                """Korisniku se ne poklapaju lozinke"""
                 if (lozinka2 != lozinka1):
                     poruka="Lozinka za potvrdu nije ista!"
                     context = {'form': form, 'poruka': poruka}
@@ -278,9 +308,15 @@ def promenalozinke(request, userId):
     context={}
     return  render(request, 'registracija/greska.html', context)
 
+"""Nemanja Krivokapić 0588/19
+Korisnik može da zatraži brisanje naloga, ali
+to može da uradi ako i samo ako se niko nije kladio na njegove utakmice i ako ne čeka da utakmice 
+budu gotove na koje se kladio
+"""
 @login_required(login_url='index')
 def brisanjenaloga(request, userId):
     if (request.user.pk == userId):
+
         poruka=""
         context={}
         if (request.method == 'POST'):
@@ -289,7 +325,6 @@ def brisanjenaloga(request, userId):
                 korisnik = Korisnik.objects.get(pk=userId)
                 lozinka = form.cleaned_data['lozinka']
                 if(korisnik.lozinka==lozinka):
-
                     return render(request, 'igrac/brisanjeporuka.html', context)
                 else:
                     poruka="Netacna lozinka!"
@@ -302,11 +337,10 @@ def brisanjenaloga(request, userId):
     context={}
     return render(request, 'registracija/greska.html', context)
 
-
-
-
-
-
+"""
+Nemanja Krivokapić 0588/19
+Korisnik potvrđuje da želi da obriše nalog
+"""
 @login_required(login_url='index')
 def brisanjeporuka(request,userId ):
     context = {}
@@ -316,8 +350,21 @@ def brisanjeporuka(request,userId ):
         aa=request.POST.get('DA')
         if (request.method == 'POST'):
           if (request.POST.get('DA')):
-              Korisnik.objects.filter(pk=userId).delete()
-              return render(request, 'igrac/rregistracija.html', context)
+              try:
+                k=Korisnik.objects.filter(pk=userId)
+                kvote=Postavljenekvote.objects.filter(idkor=k)
+                for kvota in kvote:
+                    kvota.delete()
+                Statistika.objects.get(pk=k).delete()
+                Igrac.objects.get(pk=k).delete()
+                Kvoter.objects.get(pk=k).delete()
+                Istorijautakmica.objects.get(idkor=k).delete()
+                k.delete()
+              except:
+                  poruka="Nemoguće je obrisati nalog!"
+                  context={'poruka': poruka}
+                  return render(request, 'igrac/brisanjeporuka.html', context)
+              return render(request, 'registracija/rregistracija.html', context)
           else:
               return render(request, 'igrac/brisanjenaloga.html', context)
 
@@ -326,7 +373,10 @@ def brisanjeporuka(request,userId ):
 
 
 
-
+"""
+Mihailo Milenković 0117/19
+Korisnik može da postane vip ukoliko popuni formu i ukoliko ima dovoljno novca.
+"""
 @login_required(login_url='index')
 def postanivip(request, userId):
     context = {}
@@ -366,10 +416,10 @@ def postanivip(request, userId):
         return render(request, 'igrac/postanivip.html', context)
     return render(request,'registracija/greska.html', context)
 
-
-
-
-
+"""
+Mihailo Milenković 0117/19
+Korisnik može da izabere kvotere na čije će kvote da se kladi
+"""
 @login_required(login_url='index')
 def prikaz_kvotera(request, userId):
     context = {}
@@ -380,6 +430,21 @@ def prikaz_kvotera(request, userId):
         return render(request, 'igrac/prikazKvotera.html', context)
     return render(request, 'registracija/greska.html', context)
 
+
+
+
+
+
+
+
+"""
+Mihailo Milenković 0117/19
+Korisniku se ispisuju sve kvote koje je postavio kvoter koga je korsinik izabrao
+u prikaz_kvotera. 
+Korisnik može da izabere kvote na koje će da se kladi i unosi koliko novca želi da uplati,
+Proverava se ispravnost podataka (da li je iznos uplae veći od 20 i da li on ima novca za klađenje), takođe 
+se proverava da li kvoter ima novca za isplatu.
+"""
 @login_required(login_url='index')
 def prikaz_kvota(request, kvoterId, igracId):
     context = {}
@@ -389,6 +454,9 @@ def prikaz_kvota(request, kvoterId, igracId):
 
         utakmice = []
         poruka = 0
+        """
+        Proverava se da li je utakmica počela, ukoliko jeste, ne ispisuje se.
+        """
         for kvota in kvote:
             nadjeno=0
             for u in unajavi:
@@ -415,6 +483,9 @@ def prikaz_kvota(request, kvoterId, igracId):
             tiket.save()
 
             for kvota in kvote:
+                """
+               Prikupljaju se uneti podaci.
+                """
                 data_id = "test" + kvota.idkvo
                 data = request.POST.get(data_id)
                 if (data == '0'):
@@ -442,7 +513,9 @@ def prikaz_kvota(request, kvoterId, igracId):
                 odigrano = request.POST.get(odigrano_id)
                 if data != "nula" :
                     #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
+                    """
+                    U istoriju se upisuje utakmica na koju se korisnik kladio
+                    """
                     ut=Utakmica.objects.get(pk=kvota.iduta.iduta)
                     istorija=Istorijautakmica()
                     istorija.odigrano=ut.tim1+" : "+ut.tim2+" "+odigrano
@@ -452,6 +525,10 @@ def prikaz_kvota(request, kvoterId, igracId):
                     #!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
                     if(float(data)!=1.00):
+                        """
+                        Pravi se tiketdogadjaj za svaku  utakmicu
+                        na koju se kladio korisnik
+                        """
                         ukupna_kvota *= float(data)
                         par_na_tiketu = Tiketdogadjaj()
                         par_na_tiketu.odigrano = odigrano
@@ -461,7 +538,9 @@ def prikaz_kvota(request, kvoterId, igracId):
                         par_na_tiketu.ishod = -1
                         par_na_tiketu.save()
 
-
+            """
+            Menja se stanje novca kod korisnika (skida mu se novac) i tiket se čuva u bazi
+            """
             korisnik[0].stanje -= int(uplata)
             korisnik[0].save()
             korisnikKvoter[0].stanje += int(uplata)
@@ -480,16 +559,19 @@ def prikaz_kvota(request, kvoterId, igracId):
         return render(request, 'igrac/kvote.html', context)
     return render(request,'registracija/greska.html', context)
 
+
+
+
+
 @login_required(login_url='index')
 def uplati_tiket(request,userId):
     return HttpResponse("todo")
 
 
-
-
-
-
-
+"""
+Nemanja Krivokapić 0588/19
+Kvoter može da vidi svoju statistiku.
+"""
 @login_required(login_url='index')
 def statistika(request, userId):
     context = {}
@@ -506,49 +588,14 @@ def statistika(request, userId):
     return render(request, 'registracija/greska.html', context)
 
 
+"""Mihailo Milenković 0117/19
 
+Korisnik može da se kladi na kvote vip kvotera ukoliko je vip,
+može da izabere da li želi da se kladi na pad ili prolaz tiketa.
+Korisniku se provravaju podaci koje je uneo (da li kvoter ima dovoljno novca za isplatu,
+kao i da li korisnik ima dovoljno novca za uplatu. Takodje je bitno da uplata bude veća od 20)
 
-
-
-@login_required(login_url='index')
-def najbolji(request, userId):
-    context = {}
-    if (request.user.pk == userId):
-        korisnici=Korisnik.objects.all()
-        s=Statistika.objects.all()
-        najbolji=Statistika.objects.order_by('-ukupnodobijeno')
-        brojprimljenih = Statistika.objects.order_by('-brojprimljenihpogodjenih')
-        context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih, 'userId': userId}
-        return   render(request, 'igrac/najbolji.html', context)
-    return render(request, 'registracija/greska.html', context)
-
-
-
-
-
-
-
-@login_required(login_url='index')
-def prikaz_vip_kvotera(request, userId):
-    context = {}
-    if (request.user.pk == userId):
-        kvoteri = Korisnik.objects.all()
-        vip_kvoteri = []
-        for kvoter in kvoteri:
-            if kvoter.vip:
-                vip_kvoteri.append(kvoter)
-        context = {'kvoteri': vip_kvoteri, 'userId': userId}
-        return render(request, 'igrac/prikazVipKvotera.html', context)
-    return render(request,'registracija/greska.html', context)
-
-
-
-
-
-
-
-
-
+"""
 @login_required(login_url='index')
 def prikaz_vip_kvota(request, kvoterId, igracId):
     context = {}
@@ -609,6 +656,7 @@ def prikaz_vip_kvota(request, kvoterId, igracId):
                               {'kvote_tiketi': kvote_tiketi, 'kvoterId': kvoterId, 'kvote': kvote, 'igracId': igracId,
                                'kvote': kvote, 'kvote_igraci_tiketi': kvote_igraci_tiketi, 'tiketi': tiketi_podaci, 'poruka': poruka})
 
+            """Pravljenje vip tiketa"""
             vip_tiket.kvota = ukupna_kvota
             vip_tiket.iznosuplate = uplata
             vip_tiket.dobitak = ukupna_kvota * int(uplata)
@@ -638,6 +686,53 @@ def prikaz_vip_kvota(request, kvoterId, igracId):
 
 
 
+
+
+"""
+Anja Kovačević 0484/19
+Prikaz najboljih igrača i korisnika sortiranih od najboljih do najgorih
+"""
+@login_required(login_url='index')
+def najbolji(request, userId):
+    context = {}
+    if (request.user.pk == userId):
+        korisnici=Korisnik.objects.all()
+        s=Statistika.objects.all()
+        """Sortiranje je vršeno po brojuprimljenih i pogodjenih kod kvotera, a kod igrača
+         po ukupnodobijeno
+         """
+        najbolji=Statistika.objects.order_by('-ukupnodobijeno')
+        brojprimljenih = Statistika.objects.order_by('-brojprimljenihpogodjenih')
+        context={'igraci': korisnici, 'statistike': najbolji, 'brojprimljenih': brojprimljenih, 'userId': userId}
+        return   render(request, 'igrac/najbolji.html', context)
+    return render(request, 'registracija/greska.html', context)
+
+
+"""Mihailo Milenković 0117/19
+Prikaz svih vipkvotera na čije kvote korisnici mogu da se klade
+"""
+@login_required(login_url='index')
+def prikaz_vip_kvotera(request, userId):
+    context = {}
+    if (request.user.pk == userId):
+        kvoteri = Korisnik.objects.all()
+        vip_kvoteri = []
+        for kvoter in kvoteri:
+            """Provera da li je kvoter vip"""
+            if kvoter.vip:
+                vip_kvoteri.append(kvoter)
+        context = {'kvoteri': vip_kvoteri, 'userId': userId}
+        return render(request, 'igrac/prikazVipKvotera.html', context)
+    return render(request,'registracija/greska.html', context)
+
+
+
+
+
+""" 
+ Nemanja Krivokapić 0588/19
+ Ispisivanje istorije utakmica na html stranici ISTORIJAODIGRANIH
+"""
 @login_required(login_url='index')
 def istorija(request, userId):
     context = {}
@@ -648,15 +743,9 @@ def istorija(request, userId):
         return  render(request, 'igrac/istorijaodigranih.html', context)
     return render(request, 'registracija/greska.html', context)
 
-
-
-
-
-
-
-
-
-
+"""Anja Kovačević 0484/19
+Logoutovanje korisnika
+"""
 @login_required(login_url='index')
 def logoutr(request):
     logout(request)
