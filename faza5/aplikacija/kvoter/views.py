@@ -9,6 +9,9 @@ from igrac.models import *
 def index(request):
     return HttpResponse("Kvoter ovde")
 
+"""Nemanja Krivokapić 0588/19
+Pravljenje kvote za utakmice koje su u najavi
+"""
 @login_required(login_url='index')
 def napravikvote(request, userId):
     context = {}
@@ -21,15 +24,20 @@ def napravikvote(request, userId):
         if(request.method == 'POST'):
             form = KvoteForm(request.POST or None, request.FILES)
             if form.is_valid():
+                """Uzimanje podataka iz forme koja je prethodno popunjena"""
                 prviTim = form.cleaned_data['prviTim']
                 drugiTim = form.cleaned_data['drugiTim']
                 datum = form.cleaned_data['datum']
                 try:
+                    """Ukoliko takva utakmica ne postoji prijavljuje se greška."""
                     utakmica = Utakmica.objects.get(tim1=prviTim, tim2=drugiTim, datumpocetka=datum)
                 except ObjectDoesNotExist:
                     utakmica=0
                     poruka="Utakmica ne postoji!"
                 if(utakmica):
+                    """Iz forme se prikupljaju podaci i pravi se klasa Postavljenekvote koje kvoter pravi i koje 
+                    kasnije korisnici mogu da vide.
+                    """
                     kec = form.cleaned_data['kec']
                     x = form.cleaned_data['x']
                     dvojka = form.cleaned_data['dvojka']
@@ -74,6 +82,7 @@ def napravikvote(request, userId):
                         nadjeno=0
 
                     if(nadjeno):
+                        """Ukoliko je data utakmica počela prijavljuje se greška"""
                         novakvota.iduta=utakmica
                         novakvota.idkvo=Postavljenekvote.objects.count()+1
                         novakvota.save()
@@ -88,6 +97,9 @@ def napravikvote(request, userId):
         return render(request, 'kvoter/kvoter.html', context)
     return render(request, 'registracija/greska.html', context)
 
+"""Anja Kovačević 0484/19
+Ispisivanje svih utakmica u najavi na html stranicu Aktivne utakmice
+"""
 @login_required(login_url='index')
 def prikaziaktivneutakmice(request, userId):
     context = {}
@@ -104,6 +116,10 @@ def prikaziaktivneutakmice(request, userId):
         return render(request, 'kvoter/aktivneutakmice.html', context)
     return render(request, 'registracija/greska.html', context)
 
+"""
+Mihailo Milenković 0117/19
+Ispisivanje statistike za kvotera.
+"""
 @login_required(login_url='index')
 def statistika(request, userId):
     context = {}
@@ -122,6 +138,9 @@ def statistika(request, userId):
         return render(request, 'kvoter/statistika.html', context)
     return render(request, 'registracija/greska.html', context)
 
+"""Anja Kovačević 0484/19
+Prikaz svih tiketa koji u trenutno aktivni
+"""
 @login_required(login_url='index')
 def prikazisvetikete(request, userId):
     context = {}
@@ -136,6 +155,7 @@ def prikazisvetikete(request, userId):
         nadjeno=0
         for t in tiketi:
             i=-1
+            """Ukoliko nisu počele utakmice, tiket se dodaje u listu tiketa"""
             for td in tiketdogadjaji:
                 nadjeno=0
                 for u in unajavi:
@@ -157,6 +177,10 @@ def prikazisvetikete(request, userId):
         return render(request, 'kvoter/prikazsvihtiketa.html', context)
     return render(request, 'registracija/greska.html', context)
 
+"""Mihailo Milenković 0117/19
+Popunjava se forma na osnovu svih tiketa i postavlja se kvota (popunjava se forma)
+za vip opkladu- prolaz ili pad tiketa
+"""
 @login_required(login_url='index')
 def postavivipkvotu(request, userId):
     context = {}
@@ -171,13 +195,15 @@ def postavivipkvotu(request, userId):
                 nematiketa=0
                 tiket=0
                 try:
+                    """Proverava se da li postji tiket sa datim ID-em"""
                     tiket = Tiket.objects.get(pk=idtik)
                 except:
                     nematiketa=1
                     greska="Tiket sa zadatim ID-em ne postoji!"
 
                 if(nematiketa==0):
-                    vip = VipKvote()
+                    """Ukoliko tiket postoji pravi se vip kvota i postavlja se i upisuje se u bazu"""
+                    vip = Vipkvote()
                     vip.idtik = tiket
                     vip.idkor = Kvoter.objects.get(pk=userId)
                     vip.kvotaprolaz = float(prolaz)
@@ -186,6 +212,8 @@ def postavivipkvotu(request, userId):
                     tiketdogadjaji = Tiketdogadjaj.objects.filter(idtik=tiket.idtik)
                     unajavi = Utakmiceunajavi.objects.all()
                     nadjeno = 0
+
+                    """Ukoliko su utakmice sa tiketa počele nemoguće je da se napravi vip kvota"""
                     for td in tiketdogadjaji:
                         nadjeno = 0
                         for u in unajavi:
