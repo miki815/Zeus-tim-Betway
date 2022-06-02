@@ -74,6 +74,11 @@ class Utakmiceunajavi(models.Model):
     class Meta:
         db_table = 'utakmiceunajavi'
 
+class Utakmiceutoku(models.Model):
+    iduta = models.OneToOneField(Utakmica, models.DO_NOTHING, db_column='IDUta', primary_key=True)  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'utakmiceutoku'
 
 class Postavljenekvote(models.Model):
     idkvo = models.CharField(db_column='IDKvo', primary_key=True, max_length=18)  # Field name made lowercase.
